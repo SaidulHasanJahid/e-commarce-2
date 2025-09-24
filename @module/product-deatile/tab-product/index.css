@@ -1,0 +1,12 @@
+/* Tabs label style */
+.custom-tabs .ant-tabs-tab {
+  font-size: 24px !important;
+  color: #666666 !important;
+}
+
+/* Active tab */
+.custom-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #000000 !important;
+  font-weight: 600;
+  
+}
