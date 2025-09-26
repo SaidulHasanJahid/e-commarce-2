@@ -61,51 +61,46 @@ export default function BestDeals() {
   return (
     <div className="container mx-auto px-4 transition-all duration-300">
       <div className="bg-[#fceef1] mt-20 rounded-xl p-6 flex flex-col lg:flex-row gap-6 transition-all duration-300">
-        {/* LEFT SIDE - Timer */}
-        <div className="flex flex-col lg:w-[300px]">
-          <h2 className="text-2xl font-semibold mb-6 transition-all duration-300 text-center lg:text-left">
+        {/* LEFT SIDE */}
+        <div className="flex flex-col lg:w-[300px] flex-shrink-0">
+          <h2 className="leading-normal font-medium capitalize mb-8 text-[#000000] text-[28px] sm:text-[32px] mt-4 text-center lg:text-left">
             Today's Best Deals
           </h2>
 
           {/* Timer */}
-          <div className="flex justify-center items-center gap-2 text-center mb-6 flex-wrap">
-            {["Days", "Hours", "Mins", "Secs"].map((label, index) => (
-              <React.Fragment key={index}>
-                {index !== 0 && (
-                  <span className="text-sm sm:text-base font-semibold">:</span>
-                )}
-                <div className="flex flex-col items-center min-w-[50px]">
-                  <span className="w-[50px] h-[50px] bg-black text-white flex items-center justify-center rounded-full font-bold text-sm">
-                    00
-                  </span>
-                  <span className="text-[10px] sm:text-xs mt-1">{label}</span>
-                </div>
-              </React.Fragment>
+          <div className="flex justify-center items-center gap-2 flex-wrap">
+            {["Days", "Hours", "Mins", "Secs"].map((label, idx) => (
+              <div key={idx} className="flex flex-col items-center min-w-[50px]">
+                <span className="w-[50px] h-[50px] bg-black text-white flex items-center justify-center rounded-full font-bold text-sm">
+                  00
+                </span>
+                <span className="text-[10px] sm:text-xs mt-1">{label}</span>
+              </div>
             ))}
           </div>
 
-          {/* Shop All Button */}
-          <div className="flex justify-center mt-4">
-            <button className="border border-black px-6 py-2 rounded-md hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 cursor-pointer">
+          {/* Button */}
+          <div className="flex justify-center mt-6">
+            <button className="rounded-[5px] bg-transparent border border-[var(--main-color2)] text-[var(--main-color2)] px-8 py-[10px] font-medium capitalize transition-all duration-300 hover:bg-black hover:text-white cursor-pointer">
               Shop All
             </button>
           </div>
         </div>
 
-        {/* RIGHT SIDE - Products */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-1">
+        {/* RIGHT SIDE */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 flex-1">
           {products.map((product) => (
             <Link href={`/product/${product.id}`} key={product.id}>
-              <div className="relative border border-gray-200 rounded-md bg-white group overflow-hidden transition-all duration-300 w-full h-[350px] cursor-pointer flex flex-col">
-                {/* SALE Badge */}
+              <div className="relative border border-gray-200 rounded-md bg-white group overflow-hidden transition-all duration-300 flex flex-col h-full">
+                {/* Badge */}
                 {product.discount && (
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10 transition-all duration-300">
+                  <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
                     {product.discount}
                   </span>
                 )}
 
-                {/* Product Image */}
-                <div className="relative w-full max-w-[207px] mx-auto h-[207px] flex items-center justify-center overflow-hidden transition-all duration-300">
+                {/* Image */}
+                <div className="relative w-full h-[200px] flex items-center justify-center overflow-hidden">
                   <img
                     src={product.images[0]}
                     alt={product.name}
@@ -114,52 +109,52 @@ export default function BestDeals() {
                 </div>
 
                 {/* Hover Icons */}
-                <div className="absolute top-[103.5px] mt-4 -translate-y-1/2 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
-                  <button className="bg-white/80 hover:bg-white shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer w-10 h-10 flex items-center justify-center rounded-full">
+                <div className="absolute top-1/2 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-1/2">
+                  <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
                     <FaHeart className="text-[#666666]" />
                   </button>
-                  <button className="bg-white/80 hover:bg-white shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer w-10 h-10 flex items-center justify-center rounded-full">
+                  <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
                     <FaExchangeAlt className="text-[#666666]" />
                   </button>
                   <button
                     onClick={(e) => {
-                      e.preventDefault(); // prevent link navigation
+                      e.preventDefault();
                       openProductModal(product);
                     }}
-                    className="bg-white/80 hover:bg-white shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer w-10 h-10 flex items-center justify-center rounded-full"
+                    className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110"
                   >
                     <FaEye className="text-[#666666]" />
                   </button>
                 </div>
 
-                {/* Product Info */}
-                <div className="px-4 py-2 flex flex-col gap-2 transition-all duration-300">
-                  <p className="text-[12px] text-[#666666] truncate transition-all duration-300">
+                {/* Info */}
+                <div className="px-4 py-3 flex flex-col gap-2 flex-1">
+                  <p className="text-[12px] text-[#666666] truncate">
                     {product.category}
                   </p>
-                  <h3 className="text-[20px] text-[#000000] truncate mt-2 transition-all duration-300">
+                  <h3 className="text-[15px] font-medium text-[#000000] line-clamp-1">
                     {product.name}
                   </h3>
-                  <div className="flex items-center gap-2 mb-2 transition-all duration-300">
-                    <span className="text-[#f92255] text-[22px] font-semibold transition-all duration-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#F93355] text-[18px]">
                       €{product.price}
                     </span>
                     {product.oldPrice && (
-                      <span className="line-through text-[#666666] ml-[10px] text-[22px] transition-all duration-300">
+                      <span className="line-through text-[#666666] text-[16px]">
                         €{product.oldPrice}
                       </span>
                     )}
                   </div>
 
-                  {/* Add to Cart */}
+                  {/* Cart Button */}
                   <button
                     onClick={(e) => {
-                      e.preventDefault(); // prevent link navigation
+                      e.preventDefault();
                       openCartModal(product);
                     }}
-                    className="mt-auto flex items-center justify-center gap-1 bg-black text-white text-xs font-medium py-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 rounded-md cursor-pointer hover:scale-105 hover:bg-gray-800"
+                    className="mt-auto inline-flex items-center justify-center gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
                   >
-                    <FiShoppingCart className="text-sm transition-all duration-300" />
+                    <FiShoppingCart className="text-sm" />
                     Add To Cart
                   </button>
                 </div>
