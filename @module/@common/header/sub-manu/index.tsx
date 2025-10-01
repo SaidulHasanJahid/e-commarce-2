@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import RightIcons from "../nav-icon";
 import CartDrawer from "../../drawer";
+import { Link } from "lucide-react";
 
 const HeaderSub = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -38,13 +39,15 @@ const HeaderSub = () => {
         <div className="container mx-auto flex justify-between items-center h-[70px] px-4">
           {/* Logo */}
           <div className="flex items-center gap-2 min-w-[161px] flex-shrink-0">
-            <span className="block w-[161px] h-[22px]">
+            <Link href="/" >
+                     <span className="block w-[161px] h-[22px]">
               <img
                 src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//logo.png"
                 alt="logo"
                 className="w-full h-full object-contain"
               />
             </span>
+            </Link>
           </div>
 
           {/* Search (Desktop & Medium) */}

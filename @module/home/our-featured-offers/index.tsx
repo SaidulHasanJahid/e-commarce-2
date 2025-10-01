@@ -65,15 +65,17 @@ export default function FeaturedOffers() {
               />
             </div>
 
-            {/* Text + Button */}
-            <div className="flex flex-col justify-between flex-1 w-full">
-              <p className="text-sm sm:text-base md:text-base font-medium mb-4 min-h-[48px] flex items-center justify-center px-2">
-                {offer.title}
-              </p>
-              <button className="w-full sm:w-auto px-4 sm:px-6 py-2 border rounded-md transition-all duration-300 ease-in-out group-hover:text-white group-hover:bg-gray-800 hover:scale-105 cursor-pointer">
-                Shop Now
-              </button>
-            </div>
+ {/* Text + Button */}
+<div className="flex flex-col justify-between flex-1 w-full">
+  <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[24px] text-[#000000] w-full">
+    {offer.title}
+  </p>
+</div>
+
+<button className="w-[140px] mt-4 h-[50px] font-semibold px-[13px] text-[#000000] border rounded-md transition-all duration-300 ease-in-out border-[#eeeeee] group-hover:border-[#000000] hover:scale-105 cursor-pointer">
+  Shop Now
+</button>
+
           </div>
         ))}
       </div>

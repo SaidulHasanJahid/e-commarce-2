@@ -1,4 +1,3 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -13,14 +12,19 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "i.ibb.co",  
+        hostname: "i.ibb.co",
       },
       {
         protocol: "https",
-        hostname: "clinicmaster.goeasyapp.com",  
+        hostname: "clinicmaster.goeasyapp.com",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com", 
       },
     ],
   },
 };
 
 module.exports = nextConfig;
+

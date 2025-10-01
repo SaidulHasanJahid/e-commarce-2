@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { FiMenu } from "react-icons/fi";
-import { BsGrid } from "react-icons/bs";
 import { IoChevronDown } from "react-icons/io5";
 import { MdLocalOffer } from "react-icons/md";
 import MobileDrawer from "../../drawer-navber";
+import Link from "next/link";
 
 const categories = [
   "Electronics",
@@ -66,7 +66,7 @@ const HeaderSubmanu = () => {
           {/* Shop Dropdown */}
           <div className="relative group">
             <button className="flex items-center gap-1 hover:text-[#f93355] transition cursor-pointer">
-              Shop <IoChevronDown size={14} />
+             <Link href="/shop"> Shop </Link> <IoChevronDown size={14} />
             </button>
             <div className="absolute left-0 top-full mt-3 w-[900px] ml-[-300px] bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-1 transition-all duration-300 z-[1000]">
               <div className="grid grid-cols-4 gap-8 p-6">
@@ -108,7 +108,7 @@ const HeaderSubmanu = () => {
           {/* Blog Dropdown */}
           <div className="relative group">
             <button className="flex items-center gap-1 hover:text-[#f93355] transition cursor-pointer">
-              Blog <IoChevronDown size={14} />
+             <Link href="/blog"> Blog </Link> <IoChevronDown size={14} />
             </button>
             <div className="absolute left-0 top-full mt-3 w-[500px] bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-1 transition-all duration-300 z-[1000]">
               <div className="grid grid-cols-2 gap-8 p-6">
