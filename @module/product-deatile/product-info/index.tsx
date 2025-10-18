@@ -1,19 +1,58 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { FiPlus, FiMinus } from "react-icons/fi";
-import {
-  FiShoppingCart,
-  FiHeart,
-  FiShare2,
-  FiTruck,
-  FiHelpCircle,
-} from "react-icons/fi";
-import { BsArrowLeftRight } from "react-icons/bs";
+import { FaEye } from "react-icons/fa";
+import { FiHeart, FiHelpCircle, FiMinus, FiPlus, FiShare2, FiShoppingCart, FiTruck } from "react-icons/fi";
 import { MdTimer } from "react-icons/md";
-import { FaCcMastercard, FaCcPaypal, FaCcVisa, FaEbay, FaEye } from "react-icons/fa";
+const products = [
+  {
+    id: 1,
+    name: "Dress GELLER NEW YORK",
+    category: "Fashion",
+    price: 26,
+    oldPrice: 70,
+    discount: "SALE",
+    images: [
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/Fa_9a.jpg",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/Fa_9a.jpg",
+    ],
+  },
+  {
+    id: 2,
+    name: "Medicube Zero Pore Pimpling",
+    category: "Health & Beauty",
+    price: 84,
+    oldPrice: 95,
+    discount: "SALE",
+    images: [
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_5a.jpg",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_5a.jpg",
+    ],
+  },
+  {
+    id: 3,
+    name: "Logitech G309 SPEED Mouse",
+    category: "Electronics , Accessories",
+    price: 33,
+    oldPrice: 35,
+    discount: "SALE",
+    images: [
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_3.jpg",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_3.jpg",
+    ],
+  },
+  {
+    id: 4,
+    name: "Christian Dior Diorstick",
+    category: "Cosmetics",
+    price: 88,
+    images: [
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
+    ],
+  },
+];
+
 
 const ProductInfo = () => {
   return (
@@ -95,6 +134,9 @@ const ProductInfo = () => {
         >
           <FiShoppingCart /> Add to cart
         </button>
+
+
+
         <button
           className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer"
         >

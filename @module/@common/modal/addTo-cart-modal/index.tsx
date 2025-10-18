@@ -33,8 +33,8 @@ export default function AddToCartModal({
   const router = useRouter();
 
   const handleNavigate = (path: string) => {
-    onClose(); // modal বন্ধ করবে
-    router.push(path); // নতুন পেজে যাবে
+    onClose();
+    router.push(path); 
   };
 
   return (

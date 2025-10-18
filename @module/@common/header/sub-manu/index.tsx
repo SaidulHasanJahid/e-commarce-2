@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import RightIcons from "../nav-icon";
 import CartDrawer from "../../drawer";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 const HeaderSub = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -38,6 +38,7 @@ const HeaderSub = () => {
       <header className="w-full bg-[#1a1a2c] text-white text-[14px] font-semibold font-['Albert Sans',sans-serif] relative z-[0]">
         <div className="container mx-auto flex justify-between items-center h-[70px] px-4">
           {/* Logo */}
+          <Link href="/" >
           <div className="flex items-center gap-2 min-w-[161px] flex-shrink-0 cursor-pointer">
           
                      <span className="block w-[161px] h-[22px]">
@@ -48,6 +49,7 @@ const HeaderSub = () => {
               />
             </span>
           </div>
+          </Link>
 
           {/* Search (Desktop & Medium) */}
           <div className="hidden bg-[#1a1a2c] lg:flex flex-1 justify-center px-4 max-w-[800px] mx-auto">

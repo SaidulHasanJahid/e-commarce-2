@@ -151,10 +151,10 @@ export default function BestDeals() {
                   </div>
 
                 {/* Add To Cart */}
-<AddToCartButton
-  product={product}
-  className="mt-auto opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0"
-/>
+                <AddToCartButton
+                  product={product}
+                  className="mt-auto opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0"
+                />
                 </div>
               </div>
             </Link>
