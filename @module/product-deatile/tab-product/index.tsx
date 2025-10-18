@@ -15,7 +15,7 @@ const lorem2 =
 const lorem3 =
   "Curabitur euismod sem vel vulputate convallis. Vestibulum ut ligula eu libero laoreet commodo. In sit amet pulvinar magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed euismod, arcu sit amet posuere malesuada, lorem ligula laoreet purus, a fringilla massa nulla at ligula. Vivamus feugiat, magna a scelerisque malesuada, eros lectus facilisis nisl, eget condimentum sem sapien id odio. Pellentesque vitae nulla at enim pharetra ultricies. Ut dignissim turpis vitae tristique tincidunt. Proin luctus nunc sit amet justo pharetra, nec aliquet nisl tristique. Integer consequat, purus id dapibus congue, sapien metus posuere orci, at volutpat nunc libero sed mi. Aenean egestas, sapien ut luctus pulvinar, nulla elit dictum libero, ac hendrerit nunc mauris nec nisl.";
 
-const AnimatedTabs: React.FC = () => {
+const AnimatedTabs = () => {
   const [activeKey, setActiveKey] = useState("1");
 
   const items: TabsProps["items"] = [

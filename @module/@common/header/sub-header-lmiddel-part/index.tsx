@@ -61,7 +61,7 @@ const HeaderSubmanu = () => {
 
         {/* Center: Desktop Nav */}
         <nav className="hidden xl:flex gap-8 relative ">
-          <a href="#" className="hover:text-[#f93355] transition cursor-pointer">Home</a>
+          <p  className="hover:text-[#f93355] transition cursor-pointer"><Link href={'/'}>Home</Link></p>
 
           {/* Shop Dropdown */}
           <div className="relative group">
@@ -126,14 +126,16 @@ const HeaderSubmanu = () => {
             </div>
           </div>
 
-          <a href="#" className="hover:text-[#f93355] transition cursor-pointer">About us</a>
-          <a href="#" className="hover:text-[#f93355] transition cursor-pointer">Contact</a>
+          <p className="hover:text-[#f93355] transition cursor-pointer"><Link href={'/about'}>About us</Link></p>
+          <p  className="hover:text-[#f93355] transition cursor-pointer"> <Link href={'/contact'}> Contact</Link></p>
         </nav>
 
         {/* Right side: Shop Today's Deal (Desktop only) */}
-        <a href="#" className="flex items-center gap-1 hover:text-[#f93355] transition cursor-pointer">
+     <Link href={'/shop-today-deal'}> 
+        <p  className="flex items-center gap-1 hover:text-[#f93355] transition cursor-pointer">
           <MdLocalOffer size={18} /> Shop today's deal
-        </a>
+        </p>
+     </Link>
       </div>
 
       {/* Mobile Drawer */}

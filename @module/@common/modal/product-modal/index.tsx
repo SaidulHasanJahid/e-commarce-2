@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Modal } from "antd";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import { FaMinus, FaPlus, FaHeart, FaExchangeAlt } from "react-icons/fa";
+import { Autoplay } from "swiper/modules";
 import { IoMdClose } from "react-icons/io";
-import { FaEye } from "react-icons/fa6";
+import { FaHeart, FaExchangeAlt } from "react-icons/fa";
+import { FiShoppingCart, FiPlus, FiMinus } from "react-icons/fi";
 import "swiper/css";
-import "swiper/css/navigation";
 
 interface Product {
   id: number;
@@ -17,15 +16,16 @@ interface Product {
   price: number;
   oldPrice?: number;
   discount?: string;
-  images?: string[]; // optional
+  images?: string[];
 }
 
+// ✅ FIXED: Added quantity and setQuantity to props
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product | null;
   quantity: number;
-  setQuantity: (quantity: number) => void;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function ProductModal({
@@ -37,23 +37,16 @@ export default function ProductModal({
 }: ProductModalProps) {
   if (!product) return null;
 
-  const swiperSettings = {
-    modules: [Navigation],
-    navigation: true,
-    spaceBetween: 10,
-    slidesPerView: 1,
-  };
-
   return (
     <Modal
       open={isOpen}
       onCancel={onClose}
       footer={null}
-      width={900}
+      width={1200}
       closeIcon={<IoMdClose className="text-2xl" />}
       className="rounded-lg"
     >
-      <div className="grid grid-cols-2 gap-8 relative">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
         {/* Left Side - Image with SALE badge */}
         <div className="relative flex items-center justify-center">
           {product.discount && (
@@ -61,8 +54,14 @@ export default function ProductModal({
               SALE
             </span>
           )}
-          <Swiper {...swiperSettings}>
-            {product?.images?.length ? (
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={10}
+            slidesPerView={1}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            loop={true}
+          >
+            {product.images && product.images.length > 0 ? (
               product.images.map((img, index) => (
                 <SwiperSlide key={index}>
                   <img
@@ -89,7 +88,7 @@ export default function ProductModal({
           <h2 className="text-2xl font-bold mb-3">{product.name}</h2>
 
           <div className="flex items-center gap-2 mb-3 text-gray-700">
-            <FaEye className="text-sm" />
+            <FaHeart className="text-sm text-red-500" />
             <span className="text-sm">In Stock</span>
           </div>
 
@@ -98,42 +97,54 @@ export default function ProductModal({
               €{product.price}
             </span>
             {product.oldPrice && (
-              <span className="text-gray-500 line-through">€{product.oldPrice}</span>
+              <span className="text-gray-500 line-through">
+                €{product.oldPrice}
+              </span>
             )}
           </div>
 
           <p className="text-gray-600 mb-6">
             Conversation flows freely with easy hands-free calling, thanks to the
-            built-in microphone. No need to even take your phone from your pocket
+            built-in microphone. No need to even take your phone from your pocket.
           </p>
 
           {/* Quantity Selector */}
-          <div className="flex items-center gap-4 mb-6">
+          <div className="w-[127px] h-[50px] flex justify-between bg-[#F7F7F7] rounded-[3px] overflow-hidden mb-4">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-10 h-10 bg-gray-100 border text-lg flex items-center justify-center hover:bg-gray-200 transition"
+              className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
             >
-              <FaMinus />
+              <FiMinus />
             </button>
-            <span className="text-lg font-medium">{quantity}</span>
+            <input
+              type="text"
+              value={quantity}
+              readOnly
+              className="w-[47px] h-full text-center outline-none bg-transparent"
+            />
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="w-10 h-10 bg-gray-100 border text-lg flex items-center justify-center hover:bg-gray-200 transition"
+              className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
             >
-              <FaPlus />
+              <FiPlus />
             </button>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            <button className="flex-1 bg-black text-white py-3 rounded-md text-lg font-medium hover:bg-gray-800 transition">
-              Add to cart
+            {/* Add to Cart Button */}
+            <button className="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer">
+              <FiShoppingCart /> Add to cart
             </button>
-            <button className="w-12 h-12 flex items-center justify-center border rounded-md hover:bg-gray-100 transition">
-              <FaHeart className="text-lg" />
+
+            {/* Heart Button */}
+            <button className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer">
+              <FaHeart />
             </button>
-            <button className="w-12 h-12 flex items-center justify-center border rounded-md hover:bg-gray-100 transition">
-              <FaExchangeAlt className="text-lg" />
+
+            {/* Exchange Button */}
+            <button className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer">
+              <FaExchangeAlt />
             </button>
           </div>
         </div>

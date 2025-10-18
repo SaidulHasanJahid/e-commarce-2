@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { FaFacebookF, FaTwitter, FaPinterestP } from "react-icons/fa";
 import { FiChevronRight } from "react-icons/fi";
+import Link from "next/link";
 
 const recentPosts = [
   {
@@ -43,26 +44,34 @@ const BlogDetail = () => {
   return (
     <>
       {/* Breadcrumb */}
-      <nav
-        className="w-full bg-[#f7f7f7] py-8 px-4"
-        aria-label="Breadcrumb"
-      >
-        <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
-          <li className="flex items-center cursor-pointer">
+    <nav className="w-full bg-[#f7f7f7] py-8 px-4" aria-label="Breadcrumb">
+      <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
+        <li className="flex items-center">
+          <Link
+            href="/"
+            className="hover:text-[#f93355] transition-colors cursor-pointer"
+          >
             Home
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-          <li className="flex items-center cursor-pointer">
-            Blog
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-          <li className="flex items-center">
-            <span className="font-medium text-[#666666]">
-              Huness I16 ProMAX Smartphone
-            </span>
-          </li>
-        </ol>
-      </nav>
+          </Link>
+          <FiChevronRight className="mx-2 text-[#666666] text-sm" />
+        </li>
+        <li className="flex items-center text-[#666666] font-medium cursor-default">
+            <Link
+            href="/blogs"
+            className="hover:text-[#f93355] transition-colors cursor-pointer"
+          >
+            Blogs
+          </Link>
+          <FiChevronRight className="mx-2 text-[#666666] text-sm" />
+
+        </li>
+        <li className="flex items-center text-[#000] font-medium cursor-default">
+          Sed et quam quis 
+        </li>
+
+        
+      </ol>
+    </nav>
 
       <div className="container mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Left Section */}

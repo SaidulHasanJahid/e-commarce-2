@@ -5,6 +5,7 @@ import { FaBars } from "react-icons/fa";
 import ProductList from "./@componant/list-product";
 import ProductArea from "./@componant/product-area";
 import { FiChevronRight } from "react-icons/fi";
+import Link from "next/link";
 
 const ShopByCategory = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -21,22 +22,23 @@ const ShopByCategory = () => {
 
   return (
     <>
-     <nav
-              className="w-full bg-[#f7f7f7] py-8 px-4"
-              aria-label="Breadcrumb"
-            >
-              <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
-                <li className="flex items-center cursor-pointer">
-                  Shop 
-                  <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-                </li>
-                <li className="flex items-center cursor-pointer">
-                  Category
-                  <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-                </li>
-                
-              </ol>
-       </nav>
+     {/* Breadcrumb */}
+    <nav className="w-full bg-[#f7f7f7] py-8 px-4" aria-label="Breadcrumb">
+      <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
+        <li className="flex items-center">
+          <Link
+            href="/"
+            className="hover:text-[#f93355] transition-colors cursor-pointer"
+          >
+            Home
+          </Link>
+          <FiChevronRight className="mx-2 text-[#666666] text-sm" />
+        </li>
+        <li className="flex items-center text-[#000] font-medium cursor-default">
+          Shop
+        </li>
+      </ol>
+    </nav>
 
       {/* Main Content */}
       <div className="container  mx-auto">

@@ -127,7 +127,7 @@ const RecommendedForYou = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-semibold">Recommended For You</h2>
-          <a href="#" className="text-sm text-blue-600 hover:underline cursor-pointer">
+          <a href="#" className="text-sm text-[#000000] hover:underline cursor-pointer">
             View All Products
           </a>
         </div>
@@ -141,11 +141,11 @@ const RecommendedForYou = () => {
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           breakpoints={{
             320: { slidesPerView: 2, spaceBetween: 10 },
-            480: { slidesPerView: 2, spaceBetween: 15 },
-            640: { slidesPerView: 2, spaceBetween: 20 },
-            768: { slidesPerView: 3, spaceBetween: 20 },
-            1024: { slidesPerView: 4, spaceBetween: 25 },
-            1280: { slidesPerView: 5, spaceBetween: 30 },
+            480: { slidesPerView: 2, spaceBetween: 10 },
+            640: { slidesPerView: 2, spaceBetween: 10},
+            768: { slidesPerView: 3, spaceBetween: 10 },
+            1024: { slidesPerView: 4, spaceBetween: 10 },
+            1280: { slidesPerView: 5, spaceBetween: 10 },
           }}
           className="pb-10 flex justify-center"
         >
@@ -214,7 +214,7 @@ const RecommendedForYou = () => {
                       e.preventDefault();
                       openCartModal(product);
                     }}
-                    className="mt-auto inline-flex items-center justify-center gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
+                    className="mt-auto inline-flex items-center justify-center cursor-pointer gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
                   >
                     <FiShoppingCart className="text-sm" />
                     Add To Cart

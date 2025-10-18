@@ -20,11 +20,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "via.placeholder.com", 
+        hostname: "via.placeholder.com",
       },
     ],
   },
 };
 
 module.exports = nextConfig;
-

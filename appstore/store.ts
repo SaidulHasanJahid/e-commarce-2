@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import productSlice from "./product-slice";
-import cartSlice from "./cart";
 import { apiSlice } from "./api-slice";
+import cartSlice from "./cart/cart-slice";
+import productSlice from "./product/product-slice";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
@@ -10,7 +10,7 @@ export type AppDispatch = typeof store.dispatch;
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
-    cart: cartSlice ,
+    cart: cartSlice,
     products: productSlice,
   },
   devTools: process.env.NODE_ENV !== "production",

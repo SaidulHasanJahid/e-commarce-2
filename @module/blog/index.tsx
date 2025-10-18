@@ -96,24 +96,23 @@ const recentPosts = [
 const BlogSection = () => {
   return (
     <>
-      {/* Breadcrumb */}
-      <nav className="w-full bg-[#f7f7f7] py-8 px-4" aria-label="Breadcrumb">
-        <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
-          <li className="flex items-center">
-            <Link
-              href="/"
-              className="hover:text-black cursor-pointer transition"
-            >
-              Home
-            </Link>
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-          <li className="flex items-center">
-            Blogs
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-        </ol>
-      </nav>
+     {/* Breadcrumb */}
+    <nav className="w-full bg-[#f7f7f7] py-8 px-4" aria-label="Breadcrumb">
+      <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
+        <li className="flex items-center">
+          <Link
+            href="/"
+            className="hover:text-[#f93355] transition-colors cursor-pointer"
+          >
+            Home
+          </Link>
+          <FiChevronRight className="mx-2 text-[#666666] text-sm" />
+        </li>
+        <li className="flex items-center text-[#000] font-medium cursor-default">
+          Blogs
+        </li>
+      </ol>
+    </nav>
 
       {/* Blog Section */}
       <div className="container mx-auto px-4 py-10">
@@ -121,6 +120,7 @@ const BlogSection = () => {
           {/* Main Blog Cards */}
           <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
             {posts.map((post) => (
+               <Link href={`/blog/${post.id}`}>
                 <div className="px-4 flex flex-col transition-shadow duration-300 cursor-pointer group">
                   <div className="w-full mt-6 h-64 relative mb-4 overflow-hidden rounded">
                     <Image
@@ -136,13 +136,13 @@ const BlogSection = () => {
                   <p className="text-[16px] text-[#666666] mb-4">
                     {post.description}
                   </p>
-                <Link href={`/blog/${post.id}`}>
+               
                 
                   <button className="border border-[#000000] text-[14px] text-[#000000] py-[13px] px-[40px] rounded-md cursor-pointer w-max hover:bg-black hover:text-white transition">
                     Read More
                   </button>
-                </Link>
                 </div>
+                </Link>
             ))}
           </div>
 

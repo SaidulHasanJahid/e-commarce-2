@@ -1,10 +1,11 @@
 "use client";
 
-import { useModal } from "@/@module/@common/modal/modal-modal-context";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
 import { FaHeart, FaExchangeAlt, FaEye } from "react-icons/fa";
-import { FiShoppingCart } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { useModal } from "@/@module/@common/modal/modal-modal-context";
+import AddToCartButton from "@/@module/@common/add-to-cart-button";
 
 const products = [
   {
@@ -56,7 +57,10 @@ const products = [
 ];
 
 export default function BestDeals() {
+  const dispatch = useDispatch();
   const { openProductModal, openCartModal } = useModal();
+
+ 
 
   return (
     <div className="container mx-auto px-4 transition-all duration-300">
@@ -79,7 +83,7 @@ export default function BestDeals() {
             ))}
           </div>
 
-          {/* Button */}
+          {/* Shop All Button */}
           <div className="flex justify-center mt-6">
             <button className="rounded-[5px] bg-transparent border border-[var(--main-color2)] text-[var(--main-color2)] px-8 py-[10px] font-medium capitalize transition-all duration-300 hover:bg-black hover:text-white cursor-pointer">
               Shop All
@@ -146,17 +150,11 @@ export default function BestDeals() {
                     )}
                   </div>
 
-                  {/* Cart Button */}
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      openCartModal(product);
-                    }}
-                    className="mt-auto inline-flex items-center justify-center gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
-                  >
-                    <FiShoppingCart className="text-sm" />
-                    Add To Cart
-                  </button>
+                {/* Add To Cart */}
+<AddToCartButton
+  product={product}
+  className="mt-auto opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0"
+/>
                 </div>
               </div>
             </Link>
@@ -166,3 +164,4 @@ export default function BestDeals() {
     </div>
   );
 }
+

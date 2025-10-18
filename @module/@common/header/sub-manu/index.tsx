@@ -38,8 +38,8 @@ const HeaderSub = () => {
       <header className="w-full bg-[#1a1a2c] text-white text-[14px] font-semibold font-['Albert Sans',sans-serif] relative z-[0]">
         <div className="container mx-auto flex justify-between items-center h-[70px] px-4">
           {/* Logo */}
-          <div className="flex items-center gap-2 min-w-[161px] flex-shrink-0">
-            <Link href="/" >
+          <div className="flex items-center gap-2 min-w-[161px] flex-shrink-0 cursor-pointer">
+          
                      <span className="block w-[161px] h-[22px]">
               <img
                 src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//logo.png"
@@ -47,7 +47,6 @@ const HeaderSub = () => {
                 className="w-full h-full object-contain"
               />
             </span>
-            </Link>
           </div>
 
           {/* Search (Desktop & Medium) */}

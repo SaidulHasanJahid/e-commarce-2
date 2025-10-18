@@ -9,6 +9,7 @@ import BannerSection from './banner-section';
 import RecommendedForYou from './recommended-for-you/inde';
 import FeaturedOffers from './our-featured-offers';
 import BuyerProtection from './entry-buyer-protection';
+import ShopByBrands from './shop-by-brands';
 
 const HomePage = () => {
   return (
@@ -21,6 +22,7 @@ const HomePage = () => {
       <RecommendedForYou />
       <FeaturedOffers />
       <BuyerProtection />
+      <ShopByBrands />
     </div>
   )
 }

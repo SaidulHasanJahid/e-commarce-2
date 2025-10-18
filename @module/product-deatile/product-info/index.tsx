@@ -91,7 +91,7 @@ const ProductInfo = () => {
           </button>
         </div>
         <button
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer"
+          className="flex-1 inline-flex items-center justify-center gap-2  bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer"
         >
           <FiShoppingCart /> Add to cart
         </button>

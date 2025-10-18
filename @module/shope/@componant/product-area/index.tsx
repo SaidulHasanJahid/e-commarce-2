@@ -190,7 +190,7 @@ export default function ProductArea() {
                     e.preventDefault();
                     openCartModal(product);
                   }}
-                  className="mt-auto inline-flex items-center justify-center gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
+                  className="mt-auto inline-flex cursor-pointer items-center justify-center gap-2 py-2 px-4 rounded-[5px] bg-[#F7F7F7] text-[14px] text-[var(--main-color2)] font-medium capitalize opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-black hover:text-white"
                 >
                   <FiShoppingCart className="text-sm" />
                   Add To Cart
