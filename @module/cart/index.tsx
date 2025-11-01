@@ -19,7 +19,7 @@ const CartTable: React.FC = () => {
   // ✅ Get all cart items from Redux
   const cartData = useSelector((state: RootState) => state.cart.items);
 
-  // ✅ Handle Quantity Change
+  // ✅ Handle Quantity Change    
   const handleQuantityChange = (id: number, newQuantity: number) => {
     if (newQuantity < 1) {
       dispatch(decreaseQuantity(id));

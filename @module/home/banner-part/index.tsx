@@ -11,7 +11,7 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Swiper */}
-        <div className="col-span-1 xl:col-span-3">
+        <div className="col-span-1 xl:col-span-3 ">
           <HeroSwiper />
         </div>
       </div>

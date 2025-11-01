@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Modal } from "antd";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { IoMdClose } from "react-icons/io";
 import { FaHeart, FaExchangeAlt } from "react-icons/fa";
 import { FiShoppingCart, FiPlus, FiMinus } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/appstore/cart/cart-slice";
+import { useModal } from "@/@module/@common/modal/modal-modal-context";
 import "swiper/css";
 
 interface Product {
@@ -19,7 +22,6 @@ interface Product {
   images?: string[];
 }
 
-// ✅ FIXED: Added quantity and setQuantity to props
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -35,7 +37,32 @@ export default function ProductModal({
   quantity,
   setQuantity,
 }: ProductModalProps) {
+  const dispatch = useDispatch();
+  const { openCartModal } = useModal();
+
   if (!product) return null;
+
+  const handleAddToCart = () => {
+    const cartItem: any = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      oldPrice: product.oldPrice || null,
+      category: product.category,
+      image: product.images?.[0] || "/placeholder.png",
+      quantity: quantity,
+      subtotal: product.price * quantity,
+    };
+
+    dispatch(addToCart(cartItem));
+    onClose(); // Close the current product modal
+
+    // ✅ Fixed TypeScript error by ensuring images is always an array
+    openCartModal({
+      ...product,
+      images: product.images ?? [],
+    });
+  };
 
   return (
     <Modal
@@ -133,7 +160,10 @@ export default function ProductModal({
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
             {/* Add to Cart Button */}
-            <button className="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer">
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer"
+            >
               <FiShoppingCart /> Add to cart
             </button>
 

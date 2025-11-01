@@ -1,5 +1,6 @@
 "use client";
 
+import AddToCartButtonDeatile from "@/@module/@common/ad-to-cart-button-deatile";
 import Link from "next/link";
 import { FaEye } from "react-icons/fa";
 import { FiHeart, FiHelpCircle, FiMinus, FiPlus, FiShare2, FiShoppingCart, FiTruck } from "react-icons/fi";
@@ -60,7 +61,7 @@ const ProductInfo = () => {
       {/* Title and Category */}
       <div className="space-y-2">
         <h1 className="text-[34px] font-semibold text-[#000000]">Huness I16 ProMAX Smartphone</h1>
-        <p className="text-[14px] text-[#000000]"><FaEye size={18} className="text-black animate-blink inline mr-1" /> 51 People are viewing this right now</p>
+        <p className="text-[14px] text-[#000000]"><FaEye size={18} className="text-black  animate-blink inline mr-1" /> 51 People are viewing this right now</p>
       </div>
       <p className="text-[14px] text-[#666666] flex items-center"><span className="text-red-500 mr-1">🔥</span> 110 Sold in 24 hour</p>
 
@@ -129,12 +130,8 @@ const ProductInfo = () => {
             <FiPlus />
           </button>
         </div>
-        <button
-          className="flex-1 inline-flex items-center justify-center gap-2  bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer"
-        >
-          <FiShoppingCart /> Add to cart
-        </button>
-
+       
+        <AddToCartButtonDeatile product={products[0]} />
 
 
         <button

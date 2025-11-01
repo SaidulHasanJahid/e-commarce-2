@@ -1,13 +1,13 @@
 "use client";
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
-import { useRef } from "react";
 
 const slides = [
   {
@@ -15,56 +15,61 @@ const slides = [
     title: "Playstation Controller",
     subtitle: "New Arrivals",
     desc: "Here’s a fresh take on an old favorite.",
-    img: "https://picsum.photos/seed/slide1/1600/700",
+    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-1.jpg",
   },
   {
     id: 2,
     title: "Modern Chair",
     subtitle: "Trending",
     desc: "Stylish and comfortable for your living room.",
-    img: "https://picsum.photos/seed/slide2/1600/700",
+    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-3.jpg",
   },
   {
     id: 3,
     title: "Smart Watch",
     subtitle: "Best Selling",
     desc: "Stay connected with the latest technology.",
-    img: "https://picsum.photos/seed/slide3/1600/700",
+    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-2.jpg",
   },
 ];
 
 export default function HeroSlider() {
-  const prevRef = useRef<HTMLDivElement | null>(null);
-  const nextRef = useRef<HTMLDivElement | null>(null);
+  const prevRef = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLDivElement>(null);
+  const [swiperInstance, setSwiperInstance] = useState<any>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Initialize Swiper navigation after refs are available
+  useEffect(() => {
+    if (swiperInstance) {
+      swiperInstance.params.navigation.prevEl = prevRef.current;
+      swiperInstance.params.navigation.nextEl = nextRef.current;
+      swiperInstance.navigation.init();
+      swiperInstance.navigation.update();
+    }
+  }, [swiperInstance]);
 
   return (
-    <div className="relative w-full h-[479px] rounded-lg overflow-hidden">
+    <div className="relative w-full h-[479px] lg:mt-[-20px] overflow-hidden group">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-        loop={true}
-        speed={700}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        loop
+        speed={800}
+        onSwiper={(swiper) => setSwiperInstance(swiper)}
+        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+        navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
         pagination={{
           clickable: true,
+          el: ".custom-pagination",
           bulletClass: "swiper-pagination-bullet custom-bullet",
           bulletActiveClass: "custom-bullet-active",
         }}
-        onBeforeInit={(swiper) => {
-          // @ts-ignore
-          swiper.params.navigation.prevEl = prevRef.current;
-          // @ts-ignore
-          swiper.params.navigation.nextEl = nextRef.current;
-        }}
-        navigation={{
-          prevEl: prevRef.current,
-          nextEl: nextRef.current,
-        }}
         className="w-full h-full"
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full z-40">
-              {/* Background Image */}
+            <div className="relative w-full h-full">
               <Image
                 src={slide.img}
                 alt={slide.title}
@@ -73,56 +78,88 @@ export default function HeroSlider() {
                 className="object-cover"
               />
 
-              {/* Overlay Content */}
-              <div className="absolute inset-0 flex flex-col items-start justify-center px-10 bg-white/20">
-                <motion.p
-                  className="text-sm text-black text-[24px] mb-2"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  {slide.subtitle}
-                </motion.p>
-                <motion.h2
-                  className="text-4xl md:text-6xl font-semibold text-[74px] text-black leading-tight mb-4"
-                  initial={{ opacity: 0, x: -40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7 }}
-                >
-                  {slide.title}
-                </motion.h2>
-                <motion.p
-                  className="text-lg text-black mb-6 max-w-lg"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  {slide.desc}
-                </motion.p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white text-black cursor-pointer px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition"
-                >
-                  Shop Now
-                </motion.button>
-              </div>
+              {/* Animated Overlay Content */}
+              {activeIndex === index && (
+                <div className="absolute inset-0 flex flex-col items-start justify-center ml-10 px-10 z-20">
+                  <motion.div
+                    key={slide.id + activeIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col"
+                  >
+                    <motion.p
+                      className="text-[24px] text-black mb-2"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                      {slide.subtitle}
+                    </motion.p>
+
+                    <motion.h2
+                      className="text-[60px] font-bold text-[#000] leading-tight mb-4"
+                      initial={{ opacity: 0, x: -40 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                      {slide.title}
+                    </motion.h2>
+
+                    <motion.p
+                      className="text-[18px] text-[#000] mb-6 max-w-lg"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.7, delay: 0.5 }}
+                    >
+                      {slide.desc}
+                    </motion.p>
+
+                    {/* Shop Now Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      className="bg-white text-black cursor-pointer w-[160px] h-[50px] px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition"
+                      id={`shop-btn-${index}`}
+                    >
+                      Shop Now
+                    </motion.button>
+                  </motion.div>
+                </div>
+              )}
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* Navigation Arrows */}
-      <div className="absolute bottom-6 right-6 flex items-center space-x-3 z-20">
+      {/* Pagination Dots - ALWAYS visible */}
+      <div
+        className="absolute z-20"
+        style={{
+          bottom: 60, // distance from bottom (adjust to be under button)
+          left: "10%", // adjust to align under button
+        }}
+      >
+        <div className="flex custom-pagination"></div>
+      </div>
+
+      {/* Arrow Controls (Fixed on Bottom Right) */}
+      <div className="absolute right-6 bottom-10 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all z-20">
         <div
           ref={prevRef}
-          className="w-12 h-12 flex items-center justify-center bg-white text-[#333] rounded-full shadow cursor-pointer hover:scale-110 transition"
+          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all"
+          onClick={() => swiperInstance?.slidePrev()}
         >
           <ChevronLeft />
         </div>
         <div
           ref={nextRef}
-          className="w-12 h-12 flex items-center justify-center bg-white text-[#333] rounded-full shadow cursor-pointer hover:scale-110 transition"
+          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all"
+          onClick={() => swiperInstance?.slideNext()}
         >
           <ChevronRight />
         </div>
@@ -132,19 +169,16 @@ export default function HeroSlider() {
         .custom-bullet {
           width: 10px;
           height: 10px;
-          border: 2px solid #000;
-          background: transparent;
+          background: white;
+          opacity: 0.5;
           border-radius: 50%;
-          margin: 0 4px !important;
-          opacity: 1 !important;
+          cursor: pointer;
+          margin: 0 3px;
         }
         .custom-bullet-active {
-          background: #000 !important;
-        }
-        .swiper-pagination {
-          bottom: 15px !important;
-          left: 50% !important;
-          transform: translateX(-50%);
+          opacity: 1;
+          background: white;
+          transform: scale(1.2);
         }
       `}</style>
     </div>

@@ -115,10 +115,10 @@ export default function BestDeals() {
                 {/* Hover Icons */}
                 <div className="absolute top-1/2 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-1/2">
                   <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
-                    <FaHeart className="text-[#666666]" />
+                    <FaHeart className="text-[#666666] cursor-pointer" />
                   </button>
                   <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
-                    <FaExchangeAlt className="text-[#666666]" />
+                    <FaExchangeAlt className="text-[#666666] cursor-pointer" />
                   </button>
                   <button
                     onClick={(e) => {
@@ -127,7 +127,7 @@ export default function BestDeals() {
                     }}
                     className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110"
                   >
-                    <FaEye className="text-[#666666]" />
+                    <FaEye className="text-[#666666] cursor-pointer" />
                   </button>
                 </div>
 
