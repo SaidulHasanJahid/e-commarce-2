@@ -1,3 +1,4 @@
+// components/sections/CustomerMostLoved.tsx
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,16 +11,27 @@ import "swiper/css";
 import "swiper/css/navigation";
 import AddToCartButton from "@/@module/@common/add-to-cart-button";
 
+// Product Type (UI-এর জন্য)
+interface Product {
+  id: number;
+  category: string;
+  title: string;
+  price: string;
+  oldPrice?: string;
+  tag?: string;
+  image: string[];
+}
 
-const products = [
+const products: Product[] = [
   {
     id: 1,
     category: "Cosmetics",
     title: "Christian Dior Lipstick",
     price: "€88",
+    oldPrice: "€125",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//stroller-baby-brown.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//stroller-baby-brown.jpg",
     ],
   },
   {
@@ -27,9 +39,10 @@ const products = [
     category: "Handbags",
     title: "Luxury Leather Bag",
     price: "€176",
+    oldPrice: "€55",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//stroller-baby-brown.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -37,9 +50,11 @@ const products = [
     category: "Fashion, Sneakers",
     title: "High Top Sneakers",
     price: "€220",
+    oldPrice: "€75",
+    tag: "SALE",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//E_32.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -51,7 +66,7 @@ const products = [
     tag: "SALE",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_12.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -59,9 +74,10 @@ const products = [
     category: "Fashion",
     title: "Women's Sweater Casual",
     price: "€352",
+    oldPrice: "€400",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_1.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -69,10 +85,11 @@ const products = [
     category: "Electronics",
     title: "Logitech G309 Mouse",
     price: "€99",
+    oldPrice: "€150",
     tag: "SALE",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//S_11a.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -80,9 +97,10 @@ const products = [
     category: "Beauty",
     title: "Medicube Zero Pore Cream",
     price: "€65",
+    oldPrice: "€145",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_11.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -90,9 +108,10 @@ const products = [
     category: "Watches",
     title: "Luxury Wrist Watch",
     price: "€450",
+    oldPrice: "€505",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//S_11c.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -100,9 +119,10 @@ const products = [
     category: "Shoes",
     title: "Running Shoes",
     price: "€120",
+    oldPrice: "€205",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_8.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
   {
@@ -110,9 +130,10 @@ const products = [
     category: "Accessories",
     title: "Leather Belt",
     price: "€35",
+    oldPrice: "€55",
     image: [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//E_30.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpg",
     ],
   },
 ];
@@ -120,29 +141,29 @@ const products = [
 const CustomerMostLoved = () => {
   const { openProductModal } = useModal();
 
+  const navPrevClass = "customer-loved-swiper-prev";
+  const navNextClass = "customer-loved-swiper-next";
+
   return (
-    <div className="bg-gray-50 container relative">
-      <section className="w-full px-4 md:px-12 lg:px-24 py-10 mt-30 relative">
+    <div className="container mx-auto">
+      <section className="w-full px-4 md:px-12 lg:px-24 py-10 mt-20 relative group">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-          <h2 className="text-[24px] sm:text-[30px] text-[#000000] font-semibold mb-4">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-black md:text-2xl">
             Customer Most Loved
           </h2>
-          <a
-            href="#"
-            className="text-[14px] mb-4 text-[#000000] underline cursor-pointer"
-          >
+          <Link href="/products" className="text-sm text-black hover:underline">
             View All Products
-          </a>
+          </Link>
         </div>
 
         {/* Swiper */}
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={15}
-          slidesPerView={1}
-          navigation={{ nextEl: ".custom-next", prevEl: ".custom-prev" }}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          loop={true}
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          navigation={{ nextEl: `.${navNextClass}`, prevEl: `.${navPrevClass}` }}
           breakpoints={{
             320: { slidesPerView: 2, spaceBetween: 10 },
             480: { slidesPerView: 2, spaceBetween: 10 },
@@ -151,88 +172,96 @@ const CustomerMostLoved = () => {
             1024: { slidesPerView: 4, spaceBetween: 10 },
             1280: { slidesPerView: 5, spaceBetween: 10 },
           }}
-          className="pb-10 flex justify-center"
+          className="pb-10"
         >
-          {products.map((product:any) => (
-            <SwiperSlide key={product.id} className="flex justify-center">
-              <Link href={`/product/${product.id}`}>
-                <div className="relative border border-gray-200 rounded-md bg-white group overflow-hidden transition-all duration-300 w-full max-w-[226px] h-[350px] cursor-pointer flex flex-col">
-                  {/* SALE Badge */}
+          {products.map((product:any) => {
+            const cartProduct = {
+              id: product.id,
+              name: product.title,
+              price: product.price,
+              oldPrice: product.oldPrice || null,
+              category: product.category,
+              images: product.image,
+            };
+
+            return (
+              <SwiperSlide key={product.id} className="flex justify-center">
+                <div className="group/card relative flex h-[350px] w-full max-w-[226px] cursor-pointer flex-col overflow-hidden rounded-md border border-gray-200 bg-white transition-all duration-300 hover:shadow-md">
+                  {/* SALE Tag */}
                   {product.tag && (
-                    <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10 transition-all duration-300">
+                    <span className="absolute left-3 top-3 z-10 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
                       {product.tag}
                     </span>
                   )}
 
-                  {/* Product Image */}
-                  <div className="relative w-full h-[207px] flex items-center justify-center overflow-hidden transition-all duration-300">
+                  {/* Image */}
+                  <div className="relative flex h-[207px] items-center justify-center overflow-hidden">
                     <img
                       src={product.image[0]}
                       alt={product.title}
-                      className="w-full h-[207px] object-contain transition-transform duration-300 group-hover:scale-105"
+                      className="h-full w-full object-contain transition-transform duration-300 group-hover/card:scale-105"
                     />
                   </div>
 
                   {/* Hover Icons */}
-                  <div className="absolute top-[103.5px] mt-4 -translate-y-1/2 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
-                    <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
-                      <FaHeart className="text-[#666666] cursor-pointer" />
+                  <div className="absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 opacity-0 transition-all duration-300 group-hover/card:opacity-100">
+                    <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110">
+                      <FaHeart className="text-[#666]" />
                     </button>
-                    <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110">
-                      <FaExchangeAlt className="text-[#666666] cursor-pointer" />
+                    <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110">
+                      <FaExchangeAlt className="text-[#666]" />
                     </button>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         openProductModal(product);
                       }}
-                      className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110"
+                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110"
                     >
-                      <FaEye className="text-[#666666] cursor-pointer" />
+                      <FaEye className="text-[#666]" />
                     </button>
                   </div>
 
-                  {/* Product Info */}
-                  <div className="px-3 sm:px-4 py-2 flex flex-col gap-2 transition-all duration-300 flex-1">
-                    <p className="text-[12px] text-[#666666] overflow-hidden whitespace-nowrap text-ellipsis">
-                      {product.category}
-                    </p>
-
-                    <h3 className="text-[14px] sm:text-[16px] leading-[1.2] font-medium capitalize text-[#000000] line-clamp-1">
+                  {/* Info */}
+                  <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
+                    <p className="truncate text-xs text-[#666]">{product.category}</p>
+                    <h3 className="line-clamp-1 text-sm font-medium capitalize text-black sm:text-base">
                       {product.title}
                     </h3>
-
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[#F93355] text-[18px] sm:text-[20px]">
-                        {product.price}
-                      </span>
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="text-lg text-[#F93355] sm:text-xl">{product.price}</span>
                       {product.oldPrice && (
-                        <span className="line-through text-[#666666] ml-[4px] text-[16px] sm:text-[20px]">
+                        <span className="text-base text-[#666] line-through sm:text-lg">
                           {product.oldPrice}
                         </span>
                       )}
                     </div>
 
-                    {/* AddToCartButton (global, dynamic) */}
-                    <AddToCartButton
-                      product={product}
-                      className="mt-auto opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0"
-                    />
+                    {/* Add to Cart */}
+                    <div  className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 w-full"> 
+                      <AddToCartButton product={cartProduct} />
+                    </div>
                   </div>
                 </div>
-              </Link>
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
 
-        {/* Navigation Buttons */}
-        <div className="custom-prev absolute top-1/2 -translate-y-1/2 left-2 z-20 cursor-pointer">
-          <button className="w-10 h-10 flex items-center cursor-pointer justify-center rounded-full shadow bg-black text-white hover:bg-white hover:text-black transition">
+        {/* Arrows - Hover Only + Cursor Pointer */}
+        <div
+          className={`${navPrevClass} absolute left-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+        >
+          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black text-white shadow transition hover:bg-white hover:text-black">
             <IoChevronBack size={20} />
           </button>
         </div>
-        <div className="custom-next absolute top-1/2 -translate-y-1/2 right-2 z-20 cursor-pointer">
-          <button className="w-10 h-10 flex items-center cursor-pointer justify-center rounded-full shadow bg-black text-white hover:bg-white hover:text-black transition">
+
+        <div
+          className={`${navNextClass} absolute right-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+        >
+          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black text-white shadow transition hover:bg-white hover:text-black">
             <IoChevronForward size={20} />
           </button>
         </div>
@@ -242,6 +271,3 @@ const CustomerMostLoved = () => {
 };
 
 export default CustomerMostLoved;
-
-
-;

@@ -48,11 +48,11 @@ const BannerSection = () => {
             slidesPerView={1}
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
             onSwiper={(swiper) => (swiperRef.current = swiper)}
-            className="rounded-xl shadow-sm overflow-hidden"
+            className=" shadow-sm overflow-hidden"
           >
             {slides.map((slide, idx) => (
               <SwiperSlide key={idx}>
-                <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] rounded-xl overflow-hidden">
+                <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px]  overflow-hidden">
                   <img
                     src={slide.image}
                     alt={slide.title}
@@ -97,23 +97,22 @@ const BannerSection = () => {
         </div>
 
         {/* RIGHT: Static Promo with background image */}
-        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] rounded-xl overflow-hidden shadow-sm">
+        <div className="relative w-full h-[300px] md:h-[300px] lg:h-[500px] overflow-hidden shadow-sm">
           {/* Background Image */}
           <img
-            src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&auto=format"
+            src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//Banner_Deal7.jpg"
             alt="Cyber Sale"
             className="w-full h-full object-cover"
           />
 
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/30"></div>
 
           {/* Content on top */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-6">
-            <h2 className="text-2xl font-bold animate-fadeInDown">
+          <div className="absolute inset-0 flex flex-col items-center p-6  text-center  ">
+            <h2 className="text-[30px] text-[#000] font-semibold animate-fadeInDown">
               Cyber Sale
             </h2>
-            <p className="text-sm md:text-base mt-2 animate-fadeInDown">
+            <p className="text-[16px] text-[#666] font-semibold md:text-base mt-2 animate-fadeInDown">
               20% off when buying and paying online
             </p>
 
@@ -121,7 +120,7 @@ const BannerSection = () => {
             <div className="flex gap-4 mt-6 justify-center">
               {Object.entries(time).map(([label, value], i) => (
                 <div key={i} className="text-center animate-fadeInUp">
-                  <div className="w-14 h-14 flex items-center justify-center bg-black text-white rounded-full text-lg font-bold">
+                  <div className="w-14 h-14 flex items-center cursor-pointer justify-center bg-black text-white rounded-full text-lg font-bold">
                     {value.toString().padStart(2, "0")}
                   </div>
                   <p className="text-xs mt-1 font-semibold">
@@ -132,7 +131,7 @@ const BannerSection = () => {
             </div>
 
             {/* Button */}
-            <button className="mt-6 px-6 py-2 hover:bg-white hover:text-black rounded-md bg-black text-white transition-all duration-500">
+            <button className="mt-6 px-6 py-2 hover:bg-white hover:text-[#000] text-[16px] cursor-pointer hover:text-whit font-semibold rounded-md bg-black text-white transition-all duration-500">
               Shop All
             </button>
           </div>

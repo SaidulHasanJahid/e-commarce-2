@@ -56,7 +56,7 @@ export default function CategoriesMenu() {
             onMouseEnter={() => setHovered(index)}
             onMouseLeave={() => setHovered(null)}
           >
-            <div className="flex items-center gap-3 text-gray-600 cursor-pointer">
+            <div className="flex items-center gap-3 h-[29px] text-gray-600 cursor-pointer">
               {cat.icon}
               <span>{cat.name}</span>
             </div>

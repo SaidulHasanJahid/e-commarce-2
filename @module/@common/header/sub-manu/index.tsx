@@ -9,18 +9,19 @@ const HeaderSub = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Prevent scrolling when drawers open
   useEffect(() => {
     if (isCartOpen || (isSearchOpen && window.innerWidth < 1024)) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isCartOpen, isSearchOpen]);
 
+  // Close drawers on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -28,39 +29,40 @@ const HeaderSub = () => {
         setIsCartOpen(false);
       }
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <>
-      <header className="w-full bg-[#1a1a2c] text-white text-[14px] font-semibold font-['Albert Sans',sans-serif] relative z-[0]">
-        <div className="container mx-auto flex justify-between items-center h-[70px] px-4">
-          {/* Logo */}
-          <Link href="/" >
-          <div className="flex items-center gap-2 min-w-[161px] flex-shrink-0 cursor-pointer">
+      {/* Header */}
+      <header className="w-full bg-[#1a1a2c] text-white text-[14px] font-semibold font-['Albert Sans',sans-serif] relative z-[10]">
+        <div className="container mx-auto flex justify-between items-center h-[90px] px-4">
           
-                     <span className="block w-[161px] h-[22px]">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 min-w-[161px] flex-shrink-0 cursor-pointer">
+            <span className="block w-[161px] h-[22px]">
               <img
                 src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//logo.png"
                 alt="logo"
                 className="w-full h-full object-contain"
               />
             </span>
-          </div>
           </Link>
 
-          {/* Search (Desktop & Medium) */}
-          <div className="hidden bg-[#1a1a2c] lg:flex flex-1 justify-center px-4 max-w-[800px] mx-auto">
-            <div className="flex w-full">
+          {/* Desktop Search */}
+          <div className="hidden lg:flex flex-1 justify-center px-4 max-w-[600px] mx-auto bg-[#1a1a2c]">
+            <div className="relative w-full">
               <input
                 type="text"
                 placeholder="Search"
-                className="flex-1 w-[90%] h-[44px] border border-[var(--line)] outline-0 shadow-none text-[14px] leading-[24px] rounded-l-[3px] px-[18px] bg-white font-semibold text-[#000]"
+                className="w-full h-[50px] border border-[#000000] rounded-[3px] pl-[18px] pr-[55px] bg-white text-[14px] font-medium text-[#000000] outline-none"
               />
-              <button className="h-[44px] bg-[#D52345] px-5 flex items-center justify-center rounded-r-[3px] cursor-pointer">
-                <FaSearch size={18} />
+              <button
+                type="button"
+                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[40px] w-[40px] bg-[#f93355] rounded-[3px] flex items-center justify-center cursor-pointer hover:bg-[#b91f3b] transition-colors duration-200"
+              >
+                <FaSearch size={16} className="text-white" />
               </button>
             </div>
           </div>
@@ -83,14 +85,14 @@ const HeaderSub = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className="flex-1 h-[44px] border border-[var(--line)] outline-0 shadow-none text-[14px] leading-[24px] rounded-l-[3px] px-[18px] bg-[#fff] text-[var(--text-2)] font-normal"
+                className="flex-1 h-[44px] border border-[#ddd] outline-none text-[14px] rounded-l-[3px] px-[18px] bg-[#fff] text-[#000] font-normal"
               />
               <button
-                className="h-[44px] bg-[#D52345] px-5 flex items-center justify-center rounded-r-[3px] cursor-pointer"
+                className="h-[44px] bg-[#D52345] px-5 flex items-center justify-center rounded-r-[3px] cursor-pointer hover:bg-[#b91f3b] transition-colors"
                 onClick={() => setIsSearchOpen(false)}
                 aria-label="Search"
               >
-                <FaSearch size={18} />
+                <FaSearch size={18} className="text-white" />
               </button>
             </div>
           </div>
