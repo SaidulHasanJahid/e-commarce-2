@@ -19,7 +19,7 @@ const TopBar = () => {
         {/* Left Text */}
         <div className="hidden md:block">
           <span className="text-[14px] font-semibold">
-            Order by phone: (84) 943 446 000 | Shop our Spring Bounty Sale
+            Order by phone: +880 1857336485 
           </span>
         </div>
 

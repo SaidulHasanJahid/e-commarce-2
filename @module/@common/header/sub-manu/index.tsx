@@ -4,6 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import RightIcons from "../nav-icon";
 import CartDrawer from "../../drawer";
 import Link from "next/link";
+import Logo from "./logo.png";
 
 const HeaderSub = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -41,9 +42,9 @@ const HeaderSub = () => {
           
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 min-w-[161px] flex-shrink-0 cursor-pointer">
-            <span className="block w-[161px] h-[22px]">
+            <span className="block w-[191px] h-[112px] lg:ml-5">
               <img
-                src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//logo.png"
+                src={Logo.src}
                 alt="logo"
                 className="w-full h-full object-contain"
               />

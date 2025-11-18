@@ -12,6 +12,7 @@ import {
   FaCcMastercard,
   FaCcAmex,
 } from "react-icons/fa";
+import Logo from "./logo.png";
 
 export default function Footer() {
   return (
@@ -65,9 +66,9 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8">
         {/* Logo + Contact */}
         <div className="col-span-1 md:col-span-2 space-y-3">
-          <span className="block w-[161px] h-[22px]">
+          <span className="block w-[161px] h-[102px]">
             <img
-              src="https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//logo.png"
+              src={Logo.src}
               alt="logo"
               className="w-full h-full object-contain"
             />
@@ -162,24 +163,23 @@ export default function Footer() {
       </div>
 
       {/* Bottom */}
-    <div className="border-t border-gray-800 py-4">
-  <div className="container mx-auto px-4 flex flex-col items-center gap-3">
-    {/* Text upore */}
-    <p className="text-gray-500 text-xs text-center">
-      SI Entry Theme © 2025 Demo Store. All Rights Reserved. Designed by{" "}
-      <span className="text-white font-medium">Smartaddons</span>
-    </p>
+      <div className="border-t border-gray-800 py-4">
+        <div className="container mx-auto px-4 flex flex-col items-center gap-3">
+          {/* Text upore */}
+          <p className="text-gray-500 text-xs text-center">
+            SI Entry Theme © 2025 Demo Store. All Rights Reserved. Designed by{" "}
+            <span className="text-white font-medium">Smartaddons</span>
+          </p>
 
-    {/* Payment Icons niche */}
-    <div className="flex gap-4 text-2xl text-gray-400">
-      <FaCcVisa className="hover:text-blue-500 cursor-pointer transition-colors" />
-      <FaCcPaypal className="hover:text-sky-500 cursor-pointer transition-colors" />
-      <FaCcMastercard className="hover:text-red-500 cursor-pointer transition-colors" />
-      <FaCcAmex className="hover:text-indigo-500 cursor-pointer transition-colors" />
-    </div>
-  </div>
-</div>
-
+          {/* Payment Icons niche */}
+          <div className="flex gap-4 text-2xl text-gray-400">
+            <FaCcVisa className="hover:text-blue-500 cursor-pointer transition-colors" />
+            <FaCcPaypal className="hover:text-sky-500 cursor-pointer transition-colors" />
+            <FaCcMastercard className="hover:text-red-500 cursor-pointer transition-colors" />
+            <FaCcAmex className="hover:text-indigo-500 cursor-pointer transition-colors" />
+          </div>
+        </div>
+      </div>
     </footer>
   );
 }

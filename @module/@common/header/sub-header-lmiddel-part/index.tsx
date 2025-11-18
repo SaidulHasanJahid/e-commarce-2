@@ -8,6 +8,7 @@ import { MdLocalOffer } from "react-icons/md";
 import MobileDrawer from "../../drawer-navber";
 import Link from "next/link";
 
+
 interface Category {
   _id: string;
   name: string;
@@ -122,7 +123,7 @@ const HeaderSubmanu = () => {
             </div>
           </div>
 
-          
+
           <div className="relative group">
             <button className="flex items-center gap-1 hover:text-[#f93355] transition cursor-pointer">
               <Link href="/blog">Blog</Link> <IoChevronDown size={14} />
