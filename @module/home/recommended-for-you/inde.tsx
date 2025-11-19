@@ -1,4 +1,3 @@
-// components/sections/RecommendedForYou.tsx
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -6,22 +5,11 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { FaHeart, FaExchangeAlt, FaEye } from "react-icons/fa";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { useModal } from "@/@module/@common/modal/modal-modal-context";
-import AddToCartButton from "@/@module/@common/add-to-cart-button"; // পাথ চেক করো
+import AddToCartButton from "@/@module/@common/add-to-cart-button";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// Product Type
-interface Product {
-  id: number;
-  category: string;
-  title: string;
-  price: string;
-  oldPrice?: string;
-  tag?: string;
-  image: string[];
-}
-
-const products: Product[] = [
+const products = [
   {
     id: 1,
     category: "Cosmetics",
@@ -145,7 +133,7 @@ const RecommendedForYou = () => {
   const navNextClass = "recommended-swiper-next";
 
   return (
-    <div className="container mx-auto relative">
+    <div className="container mx-auto">
       <section className="w-full px-4 md:px-12 lg:px-24 py-10 mt-20 relative group">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -157,7 +145,7 @@ const RecommendedForYou = () => {
           </a>
         </div>
 
-        {/* Swiper */}
+        {/* Swiper Carousel */}
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={15}
@@ -178,25 +166,29 @@ const RecommendedForYou = () => {
           className="pb-10"
         >
           {products.map((product:any) => {
-            // কার্টে `name` ও `images` চাই
+            // এই অবজেক্টটা AddToCartButton + Redux এর জন্য পারফেক্ট
             const cartProduct = {
-              ...product,
+              id: product.id,
               name: product.title,
+              price: product.price,
+              oldPrice: product.oldPrice || null,
+              category: product.category,
               images: product.image,
+              quantity: 1, // এটা না থাকলে Redux এ add হবে না!
             };
 
             return (
-              <SwiperSlide key={product.id} className="flex justify-center">
-                <div className="relative border border-gray-200 rounded-md bg-white group/card overflow-hidden transition-all duration-300 w-full max-w-[226px] h-[350px] flex flex-col cursor-pointer">
-                  {/* SALE Badge */}
+              <SwiperSlide key={product.id}>
+                <div className="group/card relative bg-white border border-gray-200 rounded-md overflow-hidden transition-all duration-300 hover:shadow-md w-full max-w-[226px] h-[350px] flex flex-col mx-auto cursor-pointer">
+                  {/* SALE Tag */}
                   {product.tag && (
-                    <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
+                    <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
                       {product.tag}
                     </span>
                   )}
 
                   {/* Product Image */}
-                  <div className="relative w-full h-[207px] flex items-center justify-center overflow-hidden">
+                  <div className="relative h-[207px] flex items-center justify-center overflow-hidden">
                     <img
                       src={product.image[0]}
                       alt={product.title}
@@ -204,12 +196,12 @@ const RecommendedForYou = () => {
                     />
                   </div>
 
-                  {/* Hover Icons */}
-                  <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-300 z-20">
-                    <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition cursor-pointer">
+                  {/* Hover Action Buttons */}
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-300 z-20">
+                    <button className="w-10 h-10 bg-white/80 rounded-full shadow-md flex items-center justify-center hover:bg-white hover:scale-110 transition">
                       <FaHeart className="text-[#666]" />
                     </button>
-                    <button className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition cursor-pointer">
+                    <button className="w-10 h-10 bg-white/80 rounded-full shadow-md flex items-center justify-center hover:bg-white hover:scale-110 transition">
                       <FaExchangeAlt className="text-[#666]" />
                     </button>
                     <button
@@ -218,36 +210,31 @@ const RecommendedForYou = () => {
                         e.stopPropagation();
                         openProductModal(product);
                       }}
-                      className="bg-white/80 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition cursor-pointer"
+                      className="w-10 h-10 bg-white/80 rounded-full shadow-md flex items-center justify-center hover:bg-white hover:scale-110 transition"
                     >
                       <FaEye className="text-[#666]" />
                     </button>
                   </div>
 
                   {/* Product Info */}
-                  <div className="px-3 sm:px-4 py-2 flex flex-col gap-2 flex-1">
-                    <p className="text-[12px] text-[#666] truncate">{product.category}</p>
-                    <h3 className="text-[14px] sm:text-[16px] font-medium capitalize text-black line-clamp-1">
+                  <div className="p-3 sm:p-4 flex flex-col flex-1 gap-2">
+                    <p className="text-xs text-[#666] truncate">{product.category}</p>
+                    <h3 className="text-sm sm:text-base font-medium line-clamp-1 capitalize text-black">
                       {product.title}
                     </h3>
 
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[#F93355] text-[18px] sm:text-[20px]">
-                        {product.price}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg sm:text-xl text-[#F93355]">{product.price}</span>
                       {product.oldPrice && (
-                        <span className="line-through text-[#666] text-[16px] sm:text-[20px]">
+                        <span className="text-base sm:text-lg text-[#666] line-through">
                           {product.oldPrice}
                         </span>
                       )}
                     </div>
 
-                    {/* Add to Cart Button */}
-                    <div className="mt-auto opacity-0 translate-y-5 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-300">
-                      <AddToCartButton
-                        product={cartProduct}
-                        className="w-full"
-                      />
+                    {/* Add to Cart Button – Hover এ দেখাবে */}
+                    <div className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 mt-2">
+                      <AddToCartButton product={cartProduct} />
                     </div>
                   </div>
                 </div>
@@ -256,19 +243,15 @@ const RecommendedForYou = () => {
           })}
         </Swiper>
 
-        {/* Navigation Arrows - Show only on hover */}
-        <div
-          className={`${navPrevClass} absolute top-1/2 -translate-y-1/2 left-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-        >
-          <button className="w-10 h-10 flex items-center justify-center rounded-full shadow bg-black text-white hover:bg-white hover:text-black transition cursor-pointer">
+        {/* Navigation Arrows – Hover এ দেখাবে */}
+        <div className={`${navPrevClass} absolute left-2 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer`}>
+          <button className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center shadow hover:bg-white hover:text-black transition">
             <IoChevronBack size={20} />
           </button>
         </div>
 
-        <div
-          className={`${navNextClass} absolute top-1/2 -translate-y-1/2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-        >
-          <button className="w-10 h-10 flex items-center justify-center rounded-full shadow bg-black text-white hover:bg-white hover:text-black transition cursor-pointer">
+        <div className={`${navNextClass} absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer`}>
+          <button className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center shadow hover:bg-white hover:text-black transition">
             <IoChevronForward size={20} />
           </button>
         </div>

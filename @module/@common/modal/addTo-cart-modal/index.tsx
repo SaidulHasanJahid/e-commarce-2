@@ -1,36 +1,23 @@
-// src/components/modals/AddToCartModal.tsx
 "use client";
 
 import React from "react";
 import { Modal, Divider } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import RecommendedForYouModal from "../related-porduct-addtocart";
 
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  oldPrice?: number | null;
-  images?: string[];
-  qty?: number;
-}
-
-interface AddToCartModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  cartItems: Product[];
-  subtotal: number;
-}
-
-export default function AddToCartModal({
-  isOpen,
-  onClose,
-  cartItems,
-  subtotal,
-}: AddToCartModalProps) {
+const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const router = useRouter();
+
+  // Live cart items from Redux (এখান থেকে লাইভ আপডেট হবে)
+  const cartItems = useSelector((state: any) => state.cart.items || []);
+
+  // Subtotal calculation
+  const subtotal = cartItems.reduce(
+    (sum: number, item: any) => sum + item.price * item.quantity,
+    0
+  );
 
   const handleNavigate = (path: string) => {
     onClose();
@@ -44,8 +31,8 @@ export default function AddToCartModal({
       footer={null}
       width={900}
       closeIcon={false}
-      className="rounded-lg"
-      bodyStyle={{ padding: 0 }}
+      className="rounded-lg add-to-cart-modal"
+      bodyStyle={{ padding: 0, maxHeight: "80vh", overflowY: "auto" }} // Scroll enable
     >
       <div className="flex justify-center items-center gap-2 text-[24px] font-medium text-[#000000] py-4">
         <CheckCircleOutlined className="text-green-600 text-2xl" />
@@ -53,65 +40,89 @@ export default function AddToCartModal({
       </div>
 
       <p className="text-center text-[14px] text-[#666666] mb-4">
-        Total {cartItems.length} Items
+        Total {cartItems.length} Item{cartItems.length !== 1 && "s"}
       </p>
 
       <Divider className="my-3" />
 
       <div className="w-full flex flex-col lg:flex-row">
+        {/* Left: Cart Items */}
         <div className="w-full lg:w-1/2 p-4 border-b lg:border-b-0 lg:border-r border-gray-200">
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-4">
-              <img
-                src={item.images?.[0] || "/placeholder.png"}
-                alt={item.name}
-                className="w-[120px] h-[120px] object-cover rounded"
-              />
-              <div className="text-center sm:text-left flex-1">
-                <h3 className="text-[16px] font-medium text-[#000000] line-clamp-2">
-                  {item.name}
-                </h3>
-                <p className="text-[#f2072f] font-semibold text-[14px]">
-                  €{item.price}
-                </p>
-                <p className="text-[#000000] text-[14px]">
-                  Qty: {item.qty || 1}
-                </p>
-              </div>
-            </div>
-          ))}
+          <div
+            className="max-h-[300px] overflow-y-auto pr-2" // Scroll when more than 3 items
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#ccc transparent",
+            }}
+          >
+            {cartItems.length === 0 ? (
+              <p className="text-center text-gray-500">No items in cart</p>
+            ) : (
+              cartItems.map((item: any) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-5 pb-4 border-b border-gray-100 last:border-0"
+                >
+                  <div className="w-[100px] h-[100px] bg-gray-100 rounded overflow-hidden  flex-shrink-0">
+                    <img
+                      src={item.images?.[0] || "/placeholder.png"}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder.png";
+                      }}
+                    />
+                  </div>
+                  <div className="text-center sm:text-left flex-1">
+                    <h3 className="text-[15px] font-medium text-[#000000] line-clamp-2">
+                      {item.name}
+                    </h3>
+                    <p className="text-[#f2072f] font-semibold text-[15px] mt-1">
+                      €{item.price}
+                    </p>
+                    <p className="text-[#666] text-[13px]">Qty: {item.quantity || 1}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
+        {/* Right: Subtotal + Buttons */}
         <div className="w-full lg:w-1/2 bg-[#f9f9f9] p-6 flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-[#000000] text-[18px] font-medium">Subtotal</span>
-            <span className="text-[#f2072f] font-semibold text-[18px]">
-              €{subtotal.toFixed(2)}
-            </span>
-          </div>
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-[#000000] text-[18px] font-medium">Subtotal</span>
+              <span className="text-[#f2072f] font-bold text-[20px]">
+                €{subtotal.toFixed(2)}
+              </span>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center mt-4">
-            <button
-              onClick={() => handleNavigate("/cart")}
-              className="px-6 py-3 text-[14px] font-medium border w-full sm:w-[168px] h-[50px] rounded-[3px] text-black bg-white cursor-pointer transition-all duration-300 hover:bg-[#f2072f] hover:text-white"
-            >
-              View Cart
-            </button>
-            <button
-              onClick={() => handleNavigate("/chack-out")}
-              className="px-6 py-3 w-full sm:w-[168px] h-[50px] text-[14px] font-medium rounded-[3px] bg-black text-white border border-transparent cursor-pointer transition-all duration-300 hover:bg-[#f2072f] hover:text-white"
-            >
-              Check Out
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => handleNavigate("/cart")}
+                className="px-6 py-3 text-[14px] cursor-pointer font-medium border border-black w-full sm:w-[168px] h-[50px] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all"
+              >
+                View Cart
+              </button>
+              <button
+                onClick={() => handleNavigate("/chack-out")}
+                className="px-6 cursor-pointer py-3 w-full sm:w-[168px] h-[50px] text-[14px] font-medium rounded-[3px] bg-black text-white hover:bg-[#f2072f] transition-all"
+              >
+                Check Out
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <Divider className="my-5" />
       <h3 className="font-medium mb-4 text-center text-lg">You may also like</h3>
-      <div className="px-4 pb-4">
+      <div className="px-4 pb-6">
         <RecommendedForYouModal />
       </div>
     </Modal>
   );
-}
+};
+
+export default AddToCartModal;

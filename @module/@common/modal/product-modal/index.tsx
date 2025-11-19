@@ -43,25 +43,24 @@ export default function ProductModal({
   if (!product) return null;
 
   const handleAddToCart = () => {
-    const cartItem: any = {
+    const cartItem:any = {
       id: product.id,
       name: product.name,
       price: product.price,
       oldPrice: product.oldPrice || null,
       category: product.category,
-      image: product.images?.[0] || "/placeholder.png",
+      images: product.images || ["/placeholder.png"], // Redux এ ইমেজ দরকার
       quantity: quantity,
-      subtotal: product.price * quantity,
     };
 
+    // Redux এ প্রোডাক্ট যোগ করা
     dispatch(addToCart(cartItem));
-    onClose(); // Close the current product modal
 
-    // ✅ Fixed TypeScript error by ensuring images is always an array
-    openCartModal({
-      ...product,
-      images: product.images ?? [],
-    });
+    // প্রোডাক্ট মডাল বন্ধ
+    onClose();
+
+    // কার্ট মডাল ওপেন (কোনো আর্গুমেন্ট লাগবে না)
+    openCartModal();
   };
 
   return (
@@ -70,111 +69,108 @@ export default function ProductModal({
       onCancel={onClose}
       footer={null}
       width={1200}
-      closeIcon={<IoMdClose className="text-2xl" />}
-      className="rounded-lg"
+      closeIcon={<IoMdClose className="text-3xl text-gray-700 hover:text-black" />}
+      centered
+      className="product-quick-view-modal"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
-        {/* Left Side - Image with SALE badge */}
-        <div className="relative flex items-center justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-4">
+
+        {/* Left Side - Images */}
+        <div className="relative">
           {product.discount && (
-            <span className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-              SALE
+            <span className="absolute top-4 left-4 z-10 bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
+              -{product.discount}
             </span>
           )}
+
           <Swiper
             modules={[Autoplay]}
             spaceBetween={10}
             slidesPerView={1}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             loop={true}
+            className="rounded-lg overflow-hidden"
           >
-            {product.images && product.images.length > 0 ? (
-              product.images.map((img, index) => (
-                <SwiperSlide key={index}>
+            {(product.images && product.images.length > 0
+              ? product.images
+              : ["/placeholder.png"]
+            ).map((img, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex items-center justify-center bg-gray-50 h-[420px] rounded-lg">
                   <img
                     src={img}
-                    alt={`${product.name}-${index}`}
-                    className="w-full h-[400px] object-contain"
+                    alt={`${product.name} - ${index + 1}`}
+                    className="max-w-full max-h-full object-contain"
                   />
-                </SwiperSlide>
-              ))
-            ) : (
-              <SwiperSlide>
-                <img
-                  src="/placeholder.png"
-                  alt="placeholder"
-                  className="w-full h-[400px] object-contain"
-                />
+                </div>
               </SwiperSlide>
-            )}
+            ))}
           </Swiper>
         </div>
 
-        {/* Right Side - Info */}
-        <div className="flex flex-col">
-          <h2 className="text-2xl font-bold mb-3">{product.name}</h2>
+        {/* Right Side - Product Info */}
+        <div className="flex flex-col justify-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">{product.name}</h2>
 
-          <div className="flex items-center gap-2 mb-3 text-gray-700">
-            <FaHeart className="text-sm text-red-500" />
-            <span className="text-sm">In Stock</span>
+          <div className="flex items-center gap-3 text-green-600 mb-4">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-lg font-medium">In Stock</span>
           </div>
 
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-2xl font-semibold text-red-600">
-              €{product.price}
-            </span>
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-4xl font-bold text-red-600">€{product.price.toFixed(2)}</span>
             {product.oldPrice && (
-              <span className="text-gray-500 line-through">
-                €{product.oldPrice}
-              </span>
+              <span className="text-2xl text-gray-500 line-through">€{product.oldPrice.toFixed(2)}</span>
             )}
           </div>
 
-          <p className="text-gray-600 mb-6">
-            Conversation flows freely with easy hands-free calling, thanks to the
-            built-in microphone. No need to even take your phone from your pocket.
+          <p className="text-gray-600 text-base leading-relaxed mb-8">
+            Conversation flows freely with easy hands-free calling, thanks to the built-in microphone. No need to even take your phone from your pocket.
           </p>
 
           {/* Quantity Selector */}
-          <div className="w-[127px] h-[50px] flex justify-between bg-[#F7F7F7] rounded-[3px] overflow-hidden mb-4">
-            <button
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
-            >
-              <FiMinus />
-            </button>
-            <input
-              type="text"
-              value={quantity}
-              readOnly
-              className="w-[47px] h-full text-center outline-none bg-transparent"
-            />
-            <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
-            >
-              <FiPlus />
-            </button>
+          <div className="flex items-center gap-4 mb-8">
+            <span className="text-lg font-medium text-gray-700">Quantity:</span>
+            <div className="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-12 h-12 flex items-center justify-center hover:bg-black hover:text-white transition text-xl font-bold"
+              >
+                <FiMinus />
+              </button>
+              <input
+                type="text"
+                value={quantity}
+                readOnly
+                className="w-16 text-center font-bold text-lg outline-none"
+              />
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-12 h-12 flex items-center justify-center hover:bg-black hover:text-white transition text-xl font-bold"
+              >
+                <FiPlus />
+              </button>
+            </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
-            {/* Add to Cart Button */}
+          <div className="flex items-center gap-4">
             <button
               onClick={handleAddToCart}
-              className="flex-1 inline-flex items-center justify-center gap-2 bg-white border border-[#000000] rounded-[3px] px-6 py-3 h-[50px] font-medium text-sm hover:bg-black hover:text-white transition-all duration-300 ease-in-out cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-3 bg-black text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-800 transition shadow-lg"
             >
-              <FiShoppingCart /> Add to cart
+              <FiShoppingCart size={22} />
+              Add to Cart
             </button>
 
-            {/* Heart Button */}
-            <button className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer">
-              <FaHeart />
+            <button className="w-14 h-14 border-2 border-gray-300 rounded-lg flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition">
+              <FaHeart size={20} />
             </button>
 
-            {/* Exchange Button */}
-            <button className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer">
-              <FaExchangeAlt />
+            <button className="w-14 h-14 border-2 border-gray-300 rounded-lg flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition">
+              <FaExchangeAlt size={20} />
             </button>
           </div>
         </div>

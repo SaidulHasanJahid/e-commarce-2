@@ -1,10 +1,11 @@
 "use client";
+
 import {
   addToCart,
   decreaseQuantity,
   removeFromCart,
 } from "@/appstore/cart/cart-slice";
-import React from "react";
+import React, { useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import {
   FiPlus,
@@ -37,16 +38,38 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
     router.push(path);
   };
 
+  const getProductImage = (item: any) => {
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      return item.images[0];
+    }
+    if (item.image) return item.image;
+    if (item.thumbnail) return item.thumbnail;
+    return "/placeholder-image.jpg";
+  };
+
+  // ESC চাপলে বন্ধ হবে
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen, onClose]);
+
   return (
     <div
       className={`fixed inset-0 bg-black/50 z-[1000] flex justify-end transition-all duration-300 ${
         isOpen ? "opacity-100 visible" : "opacity-0 invisible"
       }`}
+      onClick={onClose} // বাইরে ক্লিক করলে বন্ধ
     >
       <div
         className={`w-full sm:w-[500px] bg-white h-full shadow-lg relative p-3 transform transition-transform duration-300 overflow-y-auto z-[1100] flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        onClick={(e) => e.stopPropagation()} // ড্রয়ারের ভিতরে ক্লিক করলে বন্ধ হবে না
       >
         {/* Close button */}
         <button
@@ -58,121 +81,119 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
 
         {/* Header */}
         <h2 className="text-xl font-semibold mb-6 text-black leading-snug">
-          Shopping Cart
+          Shopping Cart ({cart.length})
         </h2>
 
-        {/* Cart items */}
-        <div className="flex-1 flex flex-col gap-6">
-          {cart.length === 0 ? (
-            <p className="text-gray-500 leading-relaxed">Your cart is empty.</p>
-          ) : (
-            cart.map((item: any) => (
-              <div
-                key={item.id}
-                className="flex gap-4 items-center border-b border-gray-200 pb-4 cursor-pointer transition-all hover:bg-gray-50 rounded"
-              >
-                <img
-                  src={item.image || item.thumbnail}
-                  alt={item.name}
-                  className="w-[120px] h-[120px] object-contain"
-                />
+        {/* Scrollable Product List - শুধু এখানে স্ক্রল হবে */}
+        <div className="flex-1 overflow-y-auto pr-2">
+          <div className="flex flex-col gap-6 pb-6">
+            {cart.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-gray-500 text-lg">Your cart is empty.</p>
+              </div>
+            ) : (
+              cart.map((item: any) => (
+                <div
+                  key={item.id}
+                  className="flex gap-4 items-start border-b border-gray-200 pb-4 hover:bg-gray-50 rounded transition-all"
+                >
+                  <div className="w-[120px] h-[120px] bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                    <img
+                      src={getProductImage(item)}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-image.jpg";
+                      }}
+                    />
+                  </div>
 
-                <div className="flex-1 flex flex-col ml-4">
-                  <p className="text-[16px] font-medium text-black leading-tight">
-                    {item.name}
-                  </p>
-                  <p className="text-[#f2072f] font-semibold text-[16px] mt-1 leading-snug">
-                    ${item.price}
-                  </p>
+                  <div className="flex-1 flex flex-col">
+                    <p className="text-[16px] font-medium text-black leading-tight line-clamp-2">
+                      {item.name}
+                    </p>
+                    <p className="text-[#f2072f] font-semibold text-[16px] mt-1">
+                      €{item.price}
+                    </p>
 
-                  <div className="flex items-center gap-2 mt-2">
-                    {/* Decrease button */}
-                    <button
-                      onClick={() => dispatch(decreaseQuantity(item.id))}
-                      className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-100 transition-transform hover:scale-110 cursor-pointer"
-                    >
-                      <FiMinus size={16} />
-                    </button>
+                    <div className="flex items-center gap- mt-3">
+                      <button
+                        onClick={() => dispatch(decreaseQuantity(item.id))}
+                        className="w-9 h-9 flex items-center cursor-pointer justify-center  border-gray-300 rounded-md hover:bg-gray-100 transition"
+                      >
+                        <FiMinus size={16} />
+                      </button>
 
-                    {/* Quantity display */}
-                    <span className="w-[50px] text-center border border-gray-200 rounded text-sm text-gray-700 py-1 leading-tight">
-                      {item.quantity}
-                    </span>
+                      <span className="w-12 text-center font-medium text-sm  rounded-md py-1">
+                        {item.quantity}
+                      </span>
 
-                    {/* Increase button */}
-                    <button
-                      onClick={() =>
-                        dispatch(addToCart({ ...item, quantity: 1 }))
-                      }
-                      className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-100 transition-transform hover:scale-110 cursor-pointer"
-                    >
-                      <FiPlus size={16} />
-                    </button>
+                      <button
+                        onClick={() => dispatch(addToCart({ ...item, quantity: 1 }))}
+                        className="w-9 h-9 flex cursor-pointer items-center justify-center  border-gray-300 rounded-md hover:bg-gray-100 transition"
+                      >
+                        <FiPlus size={16} />
+                      </button>
 
-                    {/* Remove button */}
-                    <button
-                      onClick={() => dispatch(removeFromCart(item.id))}
-                      className="ml-2 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-                    >
-                      <FiTrash2 size={20} />
-                    </button>
+                      <button
+                        onClick={() => dispatch(removeFromCart(item.id))}
+                        className="ml-3 cursor-pointer text-red-500 hover:text-red-700 transition"
+                      >
+                        <FiTrash2 size={20} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
 
-        {/* Bottom section always visible */}
-        <div className="mt-auto border-t border-gray-200 pt-4 flex flex-col gap-4">
-          {/* Top icons */}
-          <div className="flex justify-between text-black mt-2">
-            <button className="flex flex-col items-center gap-1.5 bg-white text-[14px] cursor-pointer py-2 px-3 w-[150px] text-center  transition-all leading-tight">
-              <FiTag size={24} />
-              <span className="leading-none">Add Coupon</span>
+        {/* Bottom Fixed Section - কখনো স্ক্রল করবে না */}
+        <div className="mt-auto border-t border-gray-200 pt-4 shrink-0">
+          <div className="flex justify-between text-black mb-4">
+            <button className="flex cursor-pointer flex-col items-center gap-1 text-[13px] py-2 px-3">
+              <FiTag size={22} />
+              <span>Add Coupon</span>
             </button>
-            <button className="flex flex-col items-center gap-1.5 bg-white text-[14px] cursor-pointer py-2 px-3 w-[110px] text-center  transition-all leading-tight">
-              <FiGift size={24} />
-              <span className="leading-none">Add Note</span>
+            <button className="flex flex-col cursor-pointer items-center gap-1 text-[13px] py-2 px-3">
+              <FiGift size={22} />
+              <span>Add Note</span>
             </button>
-            <button className="flex flex-col items-center gap-1.5 bg-white text-[14px] cursor-pointer py-2 px-3 w-[110px] text-center  transition-all leading-tight">
-              <FiGift size={24} />
-              <span className="leading-none">Add Gift</span>
+            <button className="flex flex-col cursor-pointer items-center gap-1 text-[13px] py-2 px-3">
+              <FiGift size={22} />
+              <span>Add Gift</span>
             </button>
-            <button className="flex flex-col items-center gap-1.5 bg-white text-[14px] cursor-pointer py-2 px-3 w-[110px] text-center  transition-all leading-tight">
-              <FiTruck size={24} />
-              <span className="leading-none">Shipping</span>
+            <button className="flex flex-col cursor-pointer items-center gap-1 text-[13px] py-2 px-3">
+              <FiTruck size={22} />
+              <span>Shipping</span>
             </button>
           </div>
 
-          {/* Subtotal and info */}
-          <div className="bg-[#f7f7f7] p-3 rounded">
-            <div className="flex justify-between text-black font-semibold text-lg leading-snug">
+          <div className="bg-[#f7f7f7] p-4 rounded-lg">
+            <div className="flex justify-between text-black font-bold text-lg mb-2">
               <span>Subtotal</span>
-              <span className="text-red-500">${subtotal}</span>
+              <span className="text-red-600">€{subtotal.toFixed(2)}</span>
             </div>
-
-            <p className="text-xs text-gray-500 leading-relaxed mt-1">
-              Taxes and Shipping Calculated at checkout
+            <p className="text-xs text-gray-500 mb-3">
+              Taxes and shipping calculated at checkout
             </p>
 
-            {/* Terms */}
-            <label className="flex items-center gap-2 text-xs text-gray-600 leading-snug mt-2">
-              <input type="checkbox" className="w-4 h-4" />I agree with the
-              Terms and Conditions
+            <label className="flex items-center gap-2 text-xs text-gray-600 mb-4">
+              <input type="checkbox" className="w-4 h-4" />
+              I agree with the Terms and Conditions
             </label>
 
-            {/* Buttons */}
-            <div className="flex gap-5 justify-center mt-3">
+            <div className="flex gap-3 justify-center">
               <button
                 onClick={() => handleNavigate("/cart")}
-                className="px-6 py-3 text-[14px] font-medium border w-[168px] h-[50px] rounded-[3px] text-black bg-white cursor-pointer transition-all duration-300 hover:bg-[#f2072f] hover:text-white leading-tight"
+                className="w-full max-w-[168px] h-12 text-sm font-medium cursor-pointer border border-black rounded hover:bg-black hover:text-white transition"
               >
                 View Cart
               </button>
               <button
                 onClick={() => handleNavigate("/chack-out")}
-                className="px-6 py-3 w-[168px] h-[50px] text-[14px] font-medium rounded-[3px] bg-black text-white border border-transparent cursor-pointer transition-all duration-300 hover:bg-[#f2072f] hover:text-white leading-tight"
+                className="w-full max-w-[168px] h-12 text-sm font-medium bg-black cursor-pointer text-white rounded hover:bg-red-600 transition"
               >
                 Check Out
               </button>

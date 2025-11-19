@@ -1,4 +1,3 @@
-// components/sections/CustomerMostLoved.tsx
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,11 +6,10 @@ import { FaHeart, FaExchangeAlt, FaEye } from "react-icons/fa";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { useModal } from "@/@module/@common/modal/modal-modal-context";
 import Link from "next/link";
+import AddToCartButton from "@/@module/@common/add-to-cart-button";
 import "swiper/css";
 import "swiper/css/navigation";
-import AddToCartButton from "@/@module/@common/add-to-cart-button";
 
-// Product Type (UI-এর জন্য)
 interface Product {
   id: number;
   category: string;
@@ -140,7 +138,6 @@ const products: Product[] = [
 
 const CustomerMostLoved = () => {
   const { openProductModal } = useModal();
-
   const navPrevClass = "customer-loved-swiper-prev";
   const navNextClass = "customer-loved-swiper-next";
 
@@ -157,13 +154,16 @@ const CustomerMostLoved = () => {
           </Link>
         </div>
 
-        {/* Swiper */}
+        {/* Swiper Carousel */}
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={15}
           loop={true}
           autoplay={{ delay: 4000, disableOnInteraction: false }}
-          navigation={{ nextEl: `.${navNextClass}`, prevEl: `.${navPrevClass}` }}
+          navigation={{
+            nextEl: `.${navNextClass}`,
+            prevEl: `.${navPrevClass}`,
+          }}
           breakpoints={{
             320: { slidesPerView: 2, spaceBetween: 10 },
             480: { slidesPerView: 2, spaceBetween: 10 },
@@ -182,11 +182,12 @@ const CustomerMostLoved = () => {
               oldPrice: product.oldPrice || null,
               category: product.category,
               images: product.image,
+              quantity: 1, // এটা ছাড়া Redux-এ add হবে না!
             };
 
             return (
-              <SwiperSlide key={product.id} className="flex justify-center">
-                <div className="group/card relative flex h-[350px] w-full max-w-[226px] cursor-pointer flex-col overflow-hidden rounded-md border border-gray-200 bg-white transition-all duration-300 hover:shadow-md">
+              <SwiperSlide key={product.id}>
+                <div className="group/card relative flex h-[350px] w-full max-w-[226px] cursor-pointer flex-col overflow-hidden rounded-md border border-gray-200 bg-white transition-all duration-300 hover:shadow-md mx-auto">
                   {/* SALE Tag */}
                   {product.tag && (
                     <span className="absolute left-3 top-3 z-10 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
@@ -194,8 +195,8 @@ const CustomerMostLoved = () => {
                     </span>
                   )}
 
-                  {/* Image */}
-                  <div className="relative flex h-[207px] items-center justify-center overflow-hidden">
+                  {/* Product Image */}
+                  <div className="relative flex h-[207px] items-center justify-center overflow-hidden bg-white">
                     <img
                       src={product.image[0]}
                       alt={product.title}
@@ -203,12 +204,12 @@ const CustomerMostLoved = () => {
                     />
                   </div>
 
-                  {/* Hover Icons */}
+                  {/* Hover Action Buttons */}
                   <div className="absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 opacity-0 transition-all duration-300 group-hover/card:opacity-100">
-                    <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110">
+                    <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md hover:bg-white hover:scale-110 transition">
                       <FaHeart className="text-[#666]" />
                     </button>
-                    <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110">
+                    <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md hover:bg-white hover:scale-110 transition">
                       <FaExchangeAlt className="text-[#666]" />
                     </button>
                     <button
@@ -217,13 +218,13 @@ const CustomerMostLoved = () => {
                         e.stopPropagation();
                         openProductModal(product);
                       }}
-                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-md transition hover:bg-white hover:scale-110"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md hover:bg-white hover:scale-110 transition"
                     >
                       <FaEye className="text-[#666]" />
                     </button>
                   </div>
 
-                  {/* Info */}
+                  {/* Product Info */}
                   <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
                     <p className="truncate text-xs text-[#666]">{product.category}</p>
                     <h3 className="line-clamp-1 text-sm font-medium capitalize text-black sm:text-base">
@@ -238,8 +239,8 @@ const CustomerMostLoved = () => {
                       )}
                     </div>
 
-                    {/* Add to Cart */}
-                    <div  className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 w-full"> 
+                    {/* Add to Cart Button - Hover এ দেখাবে */}
+                    <div className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 w-full">
                       <AddToCartButton product={cartProduct} />
                     </div>
                   </div>
@@ -249,19 +250,14 @@ const CustomerMostLoved = () => {
           })}
         </Swiper>
 
-        {/* Arrows - Hover Only + Cursor Pointer */}
-        <div
-          className={`${navPrevClass} absolute left-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-        >
-          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black text-white shadow transition hover:bg-white hover:text-black">
+        {/* Navigation Arrows - Hover এ দেখাবে */}
+        <div className={`${navPrevClass} absolute left-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 cursor-pointer`}>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white shadow hover:bg-white hover:text-black transition">
             <IoChevronBack size={20} />
           </button>
         </div>
-
-        <div
-          className={`${navNextClass} absolute right-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-        >
-          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black text-white shadow transition hover:bg-white hover:text-black">
+        <div className={`${navNextClass} absolute right-2 top-1/2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 cursor-pointer`}>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white shadow hover:bg-white hover:text-black transition">
             <IoChevronForward size={20} />
           </button>
         </div>

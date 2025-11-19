@@ -48,6 +48,16 @@ const products = [
     ],
   },
   {
+    id: 4,
+    name: "Christian Dior Diorstick",
+    category: "Cosmetics",
+    price: 88,
+    images: [
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
+      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
+    ],
+  },
+   {
     id: 5,
     name: "Logitech G309 SPEED Mouse",
     category: "Electronics , Accessories",
@@ -59,16 +69,6 @@ const products = [
       "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b//C_20.jpgt",
     ],
   },
-  {
-    id: 4,
-    name: "Christian Dior Diorstick",
-    category: "Cosmetics",
-    price: 88,
-    images: [
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
-    ],
-  },
 ];
 
 export default function BestDeals() {
@@ -77,7 +77,7 @@ export default function BestDeals() {
   return (
     <div className="container mx-auto px-4">
       <div className="bg-[#fceef1] mt-20 rounded-xl p-6 flex flex-col lg:flex-row gap-6">
-        {/* LEFT SIDE */}
+        {/* LEFT SIDE - Title + Timer */}
         <div className="flex flex-col lg:w-[300px] flex-shrink-0">
           <h2 className="text-center lg:text-left text-2xl sm:text-3xl md:text-[32px] font-medium text-black capitalize mb-8 mt-4">
             Today's Best Deals
@@ -103,9 +103,9 @@ export default function BestDeals() {
           </div>
         </div>
 
-        {/* RIGHT SIDE - SWIPER */}
+        {/* RIGHT SIDE - Swiper */}
         <div className="flex-1 relative group">
-          {/* Custom Arrows */}
+          {/* Custom Navigation Arrows */}
           <div className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button className="swiper-button-prev-custom cursor-pointer w-12 h-12 flex items-center justify-center rounded-full shadow bg-black text-white hover:bg-white hover:text-black transition">
               <IoChevronBack size={22} />
@@ -118,7 +118,6 @@ export default function BestDeals() {
             </button>
           </div>
 
-          {/* ✅ FIXED BREAKPOINTS */}
           <Swiper
             modules={[Navigation, Autoplay]}
             spaceBetween={20}
@@ -133,86 +132,93 @@ export default function BestDeals() {
               prevEl: ".swiper-button-prev-custom",
             }}
             breakpoints={{
-              0: { slidesPerView: 2, spaceBetween: 16 }, // ✅ 2 full cards on mobile
+              0: { slidesPerView: 2, spaceBetween: 16 },
               640: { slidesPerView: 2, spaceBetween: 20 },
-              768: { slidesPerView: 3, spaceBetween: 20 }, // ✅ 3 cards on medium screens
-              1024: { slidesPerView: 4, spaceBetween: 24 }, // ✅ 4 cards on large screens
+              768: { slidesPerView: 3, spaceBetween: 20 },
+              1024: { slidesPerView: 4, spaceBetween: 24 },
             }}
             className="h-full"
           >
-            {products.map((product) => (
-              <SwiperSlide key={product.id} className="!w-auto">
-                <Link href={`/product/${product.id}`} className="block">
-                  <div
-                    className="
-                      relative border border-gray-200 rounded-md bg-white 
-                      group/card overflow-hidden flex flex-col 
-                      transition-all duration-300 hover:shadow-lg
-                      w-full max-w-[260px] mx-auto
-                    "
-                  >
-                    {/* Badge */}
-                    {product.discount && (
-                      <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
-                        {product.discount}
-                      </span>
-                    )}
+            {products.map((product) => {
+              // AddToCartButton এর জন্য সঠিক ফরম্যাট + quantity: 1
+              const cartProduct = {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                oldPrice: product.oldPrice || null,
+                category: product.category,
+                images: product.images,
+                quantity: 1, // এটা না থাকলে Redux এ যাবে না!
+              };
 
-                    {/* Product Image */}
-                    <div className="w-full h-[200px] flex items-center justify-center bg-white p-4">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover/card:scale-105"
-                      />
-                    </div>
+              return (
+                <SwiperSlide key={product.id} className="!w-auto">
+                  <Link href={`/product/${product.id}`} className="block">
+                    <div className="relative border border-gray-200 rounded-md bg-white group/card overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg w-full max-w-[260px] mx-auto">
+                      {/* SALE Badge */}
+                      {product.discount && (
+                        <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
+                          {product.discount}
+                        </span>
+                      )}
 
-                    {/* Hover Icons */}
-                    <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-500 z-20">
-                      <button className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform">
-                        <FaHeart className="text-gray-600" />
-                      </button>
-                      <button className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform">
-                        <FaExchangeAlt className="text-gray-600" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          openProductModal(product);
-                        }}
-                        className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
-                      >
-                        <FaEye className="text-gray-600" />
-                      </button>
-                    </div>
-
-                    {/* Product Info */}
-                    <div className="p-4 flex flex-col gap-1 flex-1">
-                      <p className="text-xs text-gray-600 truncate">{product.category}</p>
-                      <h3 className="text-sm font-medium text-black line-clamp-1">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg text-[#F93355]">€{product.price}</span>
-                        {product.oldPrice && (
-                          <span className="line-through text-gray-500 text-base">
-                            €{product.oldPrice}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Add to Cart */}
-                      <div className="mt-auto">
-                        <AddToCartButton
-                          product={product}
-                          className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 w-full"
+                      {/* Product Image */}
+                      <div className="w-full h-[200px] flex items-center justify-center bg-white p-4">
+                        <img
+                          src={product.images[0]}
+                          alt={product.name}
+                          className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover/card:scale-105"
                         />
                       </div>
+
+                      {/* Hover Icons */}
+                      <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-500 z-20">
+                        <button className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform">
+                          <FaHeart className="text-gray-600" />
+                        </button>
+                        <button className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform">
+                          <FaExchangeAlt className="text-gray-600" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openProductModal(product);
+                          }}
+                          className="bg-white/90 hover:bg-white shadow-md w-10 h-10 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
+                        >
+                          <FaEye className="text-gray-600" />
+                        </button>
+                      </div>
+
+                      {/* Product Info */}
+                      <div className="p-4 flex flex-col gap-1 flex-1">
+                        <p className="text-xs text-gray-600 truncate">{product.category}</p>
+                        <h3 className="text-sm font-medium text-black line-clamp-1">
+                          {product.name}
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg text-[#F93355]">€{product.price}</span>
+                          {product.oldPrice && (
+                            <span className="line-through text-gray-500 text-base">
+                              €{product.oldPrice}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Add to Cart Button - Hover এ দেখাবে */}
+                        <div className="mt-auto">
+                          <AddToCartButton
+                            product={cartProduct}
+                            className="opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 w-full"
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
+                  </Link>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
       </div>
