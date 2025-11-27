@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { BsGrid } from "react-icons/bs";
+import {  useSidebarQuery } from "@/appstore/side-bar/api";
 
 const categories = [
   { name: "All categories", icon: <BsGrid /> }, 
@@ -44,7 +45,8 @@ const categories = [
 
 export default function CategoriesMenu() {
   const [hovered, setHovered] = useState<number | null>(null);
-
+   const { data: sidebarData, isLoading, isError }  = useSidebarQuery();
+  console.log("sidebarData:", sidebarData);
   return (
     <div className="w-full bg-white shadow mt-[-80px] rounded-md px-4  hidden xl:block relative">
       {/* Categories List */}

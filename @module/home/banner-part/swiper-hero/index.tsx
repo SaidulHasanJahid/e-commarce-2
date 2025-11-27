@@ -1,3 +1,174 @@
+"use client";
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { useGetHomeBannerQuery } from "@/appstore/banner/api";
+
+export default function HeroSlider() {
+  const prevRef = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLDivElement>(null);
+  const [swiperInstance, setSwiperInstance] = useState<any>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Banner API
+  const { data: BannerData, isLoading } = useGetHomeBannerQuery();
+  const slides = BannerData?.data || [];
+
+  // Setup navigation refs
+  useEffect(() => {
+    if (swiperInstance) {
+      swiperInstance.params.navigation.prevEl = prevRef.current;
+      swiperInstance.params.navigation.nextEl = nextRef.current;
+      swiperInstance.navigation.init();
+      swiperInstance.navigation.update();
+    }
+  }, [swiperInstance]);
+
+  
+
+  return (
+    <div className="relative w-full h-[489px] lg:mt-[-20px] overflow-hidden group sm:h-[460px] xs:h-[350px]">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        loop
+        speed={800}
+        onSwiper={(swiper) => setSwiperInstance(swiper)}
+        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+        navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
+        pagination={{
+          clickable: true,
+          el: ".custom-pagination",
+          bulletClass: "swiper-pagination-bullet custom-bullet",
+          bulletActiveClass: "custom-bullet-active",
+        }}
+        className="w-full h-full"
+      >
+        {slides.map((slide: any, index: number) => (
+          <SwiperSlide key={slide.id || index}>
+            <div className="relative w-full h-full">
+              {/* Image */}
+              <Image
+                src={slide.image || slide.img || ""}
+                alt={slide.title || "Banner"}
+                fill
+                priority
+                className="object-cover object-center"
+              />
+
+              {/* Overlay Text */}
+              {activeIndex === index && (
+                <div className="absolute inset-0 flex flex-col justify-center ml-10 px-10 z-20 sm:ml-6 sm:px-6 xs:px-4">
+                  <motion.div
+                    key={slide.id + activeIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col"
+                  >
+                    <motion.p
+                      className="text-[24px] text-black mb-2 sm:text-[18px] xs:text-[16px]"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                      {slide.subtitle || slide.sub_title || ""}
+                    </motion.p>
+
+                    <motion.h2
+                      className="text-[60px] font-bold text-[#000] leading-tight mb-4 sm:text-[40px] xs:text-[28px] xs:leading-snug"
+                      initial={{ opacity: 0, x: -40 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                      {slide.title}
+                    </motion.h2>
+
+                    <motion.p
+                      className="text-[18px] text-[#000] mb-6 max-w-lg sm:text-[16px] xs:text-[14px] xs:max-w-xs"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.7, delay: 0.5 }}
+                    >
+                      {slide.description || slide.desc}
+                    </motion.p>
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      className="bg-white text-black cursor-pointer w-[160px] h-[50px] px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition sm:w-[130px] sm:h-[45px] sm:text-sm xs:w-[110px] xs:h-[40px]"
+                    >
+                      Shop Now
+                    </motion.button>
+                  </motion.div>
+                </div>
+              )}
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* Pagination */}
+      <div
+        className="absolute z-20"
+        style={{
+          bottom: 60,
+          left: "10%",
+        }}
+      >
+        <div className="flex custom-pagination"></div>
+      </div>
+
+      {/* Navigation Arrows */}
+      <div className="absolute right-6 bottom-10 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all z-20">
+        <div
+          ref={prevRef}
+          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
+          onClick={() => swiperInstance?.slidePrev()}
+        >
+          <ChevronLeft />
+        </div>
+        <div
+          ref={nextRef}
+          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
+          onClick={() => swiperInstance?.slideNext()}
+        >
+          <ChevronRight />
+        </div>
+      </div>
+
+      {/* Pagination CSS */}
+      <style jsx global>{`
+        .custom-bullet {
+          width: 10px;
+          height: 10px;
+          background: white;
+          opacity: 0.5;
+          border-radius: 50%;
+          cursor: pointer;
+          margin: 0 3px;
+        }
+        .custom-bullet-active {
+          opacity: 1;
+          background: white;
+          transform: scale(1.2);
+        }
+      `}</style>
+    </div>
+  );
+}
+
+
 // "use client";
 // import { useRef, useState, useEffect } from "react";
 // import Image from "next/image";
@@ -39,7 +210,6 @@
 //   const [swiperInstance, setSwiperInstance] = useState<any>(null);
 //   const [activeIndex, setActiveIndex] = useState(0);
 
-//   // Initialize Swiper navigation after refs are available
 //   useEffect(() => {
 //     if (swiperInstance) {
 //       swiperInstance.params.navigation.prevEl = prevRef.current;
@@ -50,7 +220,7 @@
 //   }, [swiperInstance]);
 
 //   return (
-//     <div className="relative w-full h-[479px] lg:mt-[-20px] overflow-hidden group">
+//     <div className="relative w-full h-[489px] lg:mt-[-20px] overflow-hidden group sm:h-[460px] xs:h-[350px]">
 //       <Swiper
 //         modules={[Navigation, Pagination, Autoplay]}
 //         autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -70,17 +240,18 @@
 //         {slides.map((slide, index) => (
 //           <SwiperSlide key={slide.id}>
 //             <div className="relative w-full h-full">
+//               {/* ✅ image fully visible on small screens */}
 //               <Image
 //                 src={slide.img}
 //                 alt={slide.title}
 //                 fill
 //                 priority
-//                 className="object-cover"
+//                 className="object-cover object-center"
 //               />
 
-//               {/* Animated Overlay Content */}
+//               {/* Overlay Text */}
 //               {activeIndex === index && (
-//                 <div className="absolute inset-0 flex flex-col items-start justify-center ml-10 px-10 z-20">
+//                 <div className="absolute inset-0 flex flex-col justify-center ml-10 px-10 z-20 sm:ml-6 sm:px-6 xs:px-4">
 //                   <motion.div
 //                     key={slide.id + activeIndex}
 //                     initial={{ opacity: 0 }}
@@ -90,7 +261,7 @@
 //                     className="flex flex-col"
 //                   >
 //                     <motion.p
-//                       className="text-[24px] text-black mb-2"
+//                       className="text-[24px] text-black mb-2 sm:text-[18px] xs:text-[16px]"
 //                       initial={{ opacity: 0, y: -20 }}
 //                       animate={{ opacity: 1, y: 0 }}
 //                       transition={{ duration: 0.5, delay: 0.1 }}
@@ -99,7 +270,7 @@
 //                     </motion.p>
 
 //                     <motion.h2
-//                       className="text-[60px] font-bold text-[#000] leading-tight mb-4"
+//                       className="text-[60px] font-bold text-[#000] leading-tight mb-4 sm:text-[40px] xs:text-[28px] xs:leading-snug"
 //                       initial={{ opacity: 0, x: -40 }}
 //                       animate={{ opacity: 1, x: 0 }}
 //                       transition={{ duration: 0.6, delay: 0.3 }}
@@ -108,7 +279,7 @@
 //                     </motion.h2>
 
 //                     <motion.p
-//                       className="text-[18px] text-[#000] mb-6 max-w-lg"
+//                       className="text-[18px] text-[#000] mb-6 max-w-lg sm:text-[16px] xs:text-[14px] xs:max-w-xs"
 //                       initial={{ opacity: 0 }}
 //                       animate={{ opacity: 1 }}
 //                       transition={{ duration: 0.7, delay: 0.5 }}
@@ -116,14 +287,13 @@
 //                       {slide.desc}
 //                     </motion.p>
 
-//                     {/* Shop Now Button */}
 //                     <motion.button
 //                       whileHover={{ scale: 1.05 }}
 //                       whileTap={{ scale: 0.95 }}
 //                       initial={{ opacity: 0, y: 20 }}
 //                       animate={{ opacity: 1, y: 0 }}
 //                       transition={{ duration: 0.6, delay: 0.7 }}
-//                       className="bg-white text-black cursor-pointer w-[160px] h-[50px] px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition"
+//                       className="bg-white text-black cursor-pointer w-[160px] h-[50px] px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition sm:w-[130px] sm:h-[45px] sm:text-sm xs:w-[110px] xs:h-[40px]"
 //                       id={`shop-btn-${index}`}
 //                     >
 //                       Shop Now
@@ -136,29 +306,29 @@
 //         ))}
 //       </Swiper>
 
-//       {/* Pagination Dots - ALWAYS visible */}
+//       {/* Pagination Dots */}
 //       <div
 //         className="absolute z-20"
 //         style={{
 //           bottom: 60,
-//           left: "10%", 
+//           left: "10%",
 //         }}
 //       >
 //         <div className="flex custom-pagination"></div>
 //       </div>
 
-//       {/* Arrow Controls (Fixed on Bottom Right) */}
+//       {/* Arrows */}
 //       <div className="absolute right-6 bottom-10 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all z-20">
 //         <div
 //           ref={prevRef}
-//           className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all"
+//           className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
 //           onClick={() => swiperInstance?.slidePrev()}
 //         >
 //           <ChevronLeft />
 //         </div>
 //         <div
 //           ref={nextRef}
-//           className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all"
+//           className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
 //           onClick={() => swiperInstance?.slideNext()}
 //         >
 //           <ChevronRight />
@@ -184,188 +354,3 @@
 //     </div>
 //   );
 // }
-"use client";
-import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
-const slides = [
-  {
-    id: 1,
-    title: "Playstation Controller",
-    subtitle: "New Arrivals",
-    desc: "Here’s a fresh take on an old favorite.",
-    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-1.jpg",
-  },
-  {
-    id: 2,
-    title: "Modern Chair",
-    subtitle: "Trending",
-    desc: "Stylish and comfortable for your living room.",
-    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-3.jpg",
-  },
-  {
-    id: 3,
-    title: "Smart Watch",
-    subtitle: "Best Selling",
-    desc: "Stay connected with the latest technology.",
-    img: "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/slider7-2.jpg",
-  },
-];
-
-export default function HeroSlider() {
-  const prevRef = useRef<HTMLDivElement>(null);
-  const nextRef = useRef<HTMLDivElement>(null);
-  const [swiperInstance, setSwiperInstance] = useState<any>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    if (swiperInstance) {
-      swiperInstance.params.navigation.prevEl = prevRef.current;
-      swiperInstance.params.navigation.nextEl = nextRef.current;
-      swiperInstance.navigation.init();
-      swiperInstance.navigation.update();
-    }
-  }, [swiperInstance]);
-
-  return (
-    <div className="relative w-full h-[489px] lg:mt-[-20px] overflow-hidden group sm:h-[460px] xs:h-[350px]">
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        autoplay={{ delay: 4000, disableOnInteraction: false }}
-        loop
-        speed={800}
-        onSwiper={(swiper) => setSwiperInstance(swiper)}
-        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-        navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
-        pagination={{
-          clickable: true,
-          el: ".custom-pagination",
-          bulletClass: "swiper-pagination-bullet custom-bullet",
-          bulletActiveClass: "custom-bullet-active",
-        }}
-        className="w-full h-full"
-      >
-        {slides.map((slide, index) => (
-          <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full">
-              {/* ✅ image fully visible on small screens */}
-              <Image
-                src={slide.img}
-                alt={slide.title}
-                fill
-                priority
-                className="object-cover object-center"
-              />
-
-              {/* Overlay Text */}
-              {activeIndex === index && (
-                <div className="absolute inset-0 flex flex-col justify-center ml-10 px-10 z-20 sm:ml-6 sm:px-6 xs:px-4">
-                  <motion.div
-                    key={slide.id + activeIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex flex-col"
-                  >
-                    <motion.p
-                      className="text-[24px] text-black mb-2 sm:text-[18px] xs:text-[16px]"
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.1 }}
-                    >
-                      {slide.subtitle}
-                    </motion.p>
-
-                    <motion.h2
-                      className="text-[60px] font-bold text-[#000] leading-tight mb-4 sm:text-[40px] xs:text-[28px] xs:leading-snug"
-                      initial={{ opacity: 0, x: -40 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.3 }}
-                    >
-                      {slide.title}
-                    </motion.h2>
-
-                    <motion.p
-                      className="text-[18px] text-[#000] mb-6 max-w-lg sm:text-[16px] xs:text-[14px] xs:max-w-xs"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.7, delay: 0.5 }}
-                    >
-                      {slide.desc}
-                    </motion.p>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="bg-white text-black cursor-pointer w-[160px] h-[50px] px-6 py-3 rounded shadow hover:bg-gray-800 hover:text-white transition sm:w-[130px] sm:h-[45px] sm:text-sm xs:w-[110px] xs:h-[40px]"
-                      id={`shop-btn-${index}`}
-                    >
-                      Shop Now
-                    </motion.button>
-                  </motion.div>
-                </div>
-              )}
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-      {/* Pagination Dots */}
-      <div
-        className="absolute z-20"
-        style={{
-          bottom: 60,
-          left: "10%",
-        }}
-      >
-        <div className="flex custom-pagination"></div>
-      </div>
-
-      {/* Arrows */}
-      <div className="absolute right-6 bottom-10 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all z-20">
-        <div
-          ref={prevRef}
-          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
-          onClick={() => swiperInstance?.slidePrev()}
-        >
-          <ChevronLeft />
-        </div>
-        <div
-          ref={nextRef}
-          className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full shadow cursor-pointer hover:bg-[#f93355] hover:text-white transition-all sm:w-10 sm:h-10"
-          onClick={() => swiperInstance?.slideNext()}
-        >
-          <ChevronRight />
-        </div>
-      </div>
-
-      <style jsx global>{`
-        .custom-bullet {
-          width: 10px;
-          height: 10px;
-          background: white;
-          opacity: 0.5;
-          border-radius: 50%;
-          cursor: pointer;
-          margin: 0 3px;
-        }
-        .custom-bullet-active {
-          opacity: 1;
-          background: white;
-          transform: scale(1.2);
-        }
-      `}</style>
-    </div>
-  );
-}
