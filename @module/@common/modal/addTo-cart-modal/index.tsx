@@ -30,9 +30,10 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       onCancel={onClose}
       footer={null}
       width={900}
+      height={800}
       closeIcon={false}
       className="rounded-lg add-to-cart-modal"
-      bodyStyle={{ padding: 0, maxHeight: "80vh", overflowY: "auto" }} // Scroll enable
+      
     >
       <div className="flex justify-center items-center gap-2 text-[24px] font-medium text-[#000000] py-4">
         <CheckCircleOutlined className="text-green-600 text-2xl" />

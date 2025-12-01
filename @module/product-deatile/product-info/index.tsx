@@ -1,184 +1,268 @@
 "use client";
 
-import AddToCartButtonDeatile from "@/@module/@common/ad-to-cart-button-deatile";
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/appstore/cart/cart-slice"; 
 import { FaEye } from "react-icons/fa";
-import { FiHeart, FiHelpCircle, FiMinus, FiPlus, FiShare2, FiShoppingCart, FiTruck } from "react-icons/fi";
-import { MdTimer } from "react-icons/md";
-const products = [
-  {
-    id: 1,
-    name: "Dress GELLER NEW YORK",
-    category: "Fashion",
-    price: 26,
-    oldPrice: 70,
-    discount: "SALE",
-    images: [
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/Fa_9a.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/Fa_9a.jpg",
-    ],
-  },
-  {
-    id: 2,
-    name: "Medicube Zero Pore Pimpling",
-    category: "Health & Beauty",
-    price: 84,
-    oldPrice: 95,
-    discount: "SALE",
-    images: [
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_5a.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_5a.jpg",
-    ],
-  },
-  {
-    id: 3,
-    name: "Logitech G309 SPEED Mouse",
-    category: "Electronics , Accessories",
-    price: 33,
-    oldPrice: 35,
-    discount: "SALE",
-    images: [
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_3.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/C_3.jpg",
-    ],
-  },
-  {
-    id: 4,
-    name: "Christian Dior Diorstick",
-    category: "Cosmetics",
-    price: 88,
-    images: [
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
-      "https://clinicmaster.goeasyapp.com/uploads/files/c4ca4238a0b923820dcc509a6f75849b/c4ca4238a0b923820dcc509a6f75849b/E_16.jpg",
-    ],
-  },
-];
+import { FiHeart, FiMinus, FiPlus } from "react-icons/fi";
+import { Button, message } from "antd";
+import AddToCartButtonDeatile from "@/@module/@common/ad-to-cart-button-deatile";
 
+interface Color {
+  id: number;
+  name: string;
+  status: string;
+}
 
-const ProductInfo = () => {
+interface Size {
+  id: number;
+  name: string;
+  status: string;
+}
+
+interface Brand {
+  id: number;
+  name: string;
+}
+
+interface Product {
+  id: number;
+  title: string;
+  subtitle?: string;
+  descriptionHtml?: string;
+  price: number;
+  basePrice: number;
+  productCode?: string;
+  stockQty?: number;
+  slug?: string;
+  coverImageUrl?: string;
+  thumbnailUrl?: string;
+  brand?: Brand;
+  colors?: Color[];
+  sizes?: Size[];
+}
+
+interface ProductInfoProps {
+  product: Product;
+}
+
+const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+  const [selectedSize, setSelectedSize] = useState<Size | null>(null);
+
+  const [usersViewing] = useState(() => Math.floor(Math.random() * 100) + 10);
+
+  const totalPrice = product.price * quantity;
+  const oldTotal = product.basePrice > product.price ? product.basePrice * quantity : undefined;
+  const discountPercent = product.basePrice > product.price
+    ? Math.round(((product.basePrice - product.price) / product.basePrice) * 100)
+    : 0;
+
+  const isOutOfStock = !product.stockQty || product.stockQty <= 0;
+  const hasVariants = product.colors?.length && product.sizes?.length;
+  const canAddToCart = !isOutOfStock && (!hasVariants || (selectedColor && selectedSize));
+
+  const handleAddToCart = () => {
+    if (!canAddToCart) {
+      message.warning("Please select color and size");
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        oldPrice: product.basePrice > product.price ? product.basePrice : undefined,
+        category: product.brand?.name || "Uncategorized",
+        images: [product.thumbnailUrl || product.coverImageUrl || ""],
+        quantity,
+        color: selectedColor?.name,
+        size: selectedSize?.name,
+      })
+    );
+
+    message.success("Added to cart!");
+  };
+
+  const handleBuyNow = () => {
+    if (!canAddToCart) {
+      message.warning("Please select color and size");
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        oldPrice: product.basePrice > product.price ? product.basePrice : undefined,
+        category: product.brand?.name || "Uncategorized",
+        images: [product.thumbnailUrl || product.coverImageUrl || ""],
+        quantity,
+        color: selectedColor?.name,
+        size: selectedSize?.name,
+      })
+    );
+
+    router.push("/cart");
+  };
+
   return (
-    <div className="space-y-4 max-w-[600px] mx-auto">
-      {/* Title and Category */}
-      <div className="space-y-2">
-        <h1 className="text-[34px] font-semibold text-[#000000]">Huness I16 ProMAX Smartphone</h1>
-        <p className="text-[14px] text-[#000000]"><FaEye size={18} className="text-black  animate-blink inline mr-1" /> 51 People are viewing this right now</p>
+    <div className="space-y-6 max-w-2xl mx-auto">
+      {/* Title */}
+      <div>
+        <h1 className="text-4xl font-bold text-black">{product.title}</h1>
+        <p className="text-sm text-gray-600 mt-2 flex items-center gap-2">
+          <FaEye className="text-black" />
+          {usersViewing} people are viewing this right now
+        </p>
       </div>
-      <p className="text-[14px] text-[#666666] flex items-center"><span className="text-red-500 mr-1">🔥</span> 110 Sold in 24 hour</p>
 
-      {/* Product Details */}
-      <div className="text-[14px] space-y-4">
-        <p className="text-[#666666]">
-          Availability: <span className="text-[#000000]">In stock</span>
+      {/* Stock Info */}
+      {product.stockQty !== undefined && (
+        <p className="text-sm text-gray-600">
+          <span className="text-red-500 font-bold">Fire</span> {product.stockQty} Sold in last 24 hours
+        </p>
+      )}
+
+      {/* Details */}
+      <div className="space-y-2 text-sm">
+        <p>
+          <span className="text-gray-600">Availability:</span>{" "}
+          <span className={isOutOfStock ? "text-red-600 font-bold" : "text-green-600 font-medium"}>
+            {isOutOfStock ? "OUT OF STOCK" : "In Stock"}
+          </span>
         </p>
         <p>
-          <span className="text-[#666666]">Product Code</span>: <span className="text-[#000000]">MBLHK</span>
+          <span className="text-gray-600">Product Code:</span> {product.productCode || "N/A"}
         </p>
-        <p className="text-[#666666]">
-          Category:{" "}
-          <Link href="#" className="hover:text-red-500">
-            <span className="text-[#000000]">Smartphone</span>
-          </Link>
-          , <span className="text-[#000000]">Cell Phones, Camera & Photo</span>
-        </p>
-        <p className="text-[#666666]">
-          Tag: <span className="text-[#000000]">phone, mobile, apple</span>
+        <p>
+          <span className="text-gray-600">Brand:</span> {product.brand?.name || "Uncategorized"}
         </p>
       </div>
 
       {/* Description */}
-      <p className="text-[#666666] text-[14px] mt-10 leading-[20px]">
-        The timeless Lacoste tee gets an update in a super-comfortable mid-weight fabric. A versatile essential that goes with everything, finished with an iconic crocodile
-      </p>
+      {product.descriptionHtml && (
+        <div
+          className="text-sm text-gray-600 prose prose-sm"
+          dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+        />
+      )}
+
+      {/* Color Selection */}
+      {product.colors && product.colors.length > 0 && (
+        <div>
+          <h3 className="font-medium mb-3">
+            Color: <span className="font-bold">{selectedColor?.name || "Select color"}</span>
+          </h3>
+          <div className="flex gap-3 flex-wrap">
+            {product.colors.map((color) => (
+              <button
+                key={color.id}
+                onClick={() => setSelectedColor(color)}
+                className={`w-12 h-12 rounded-full border-4 transition-all ${
+                  selectedColor?.id === color.id
+                    ? "border-black ring-4 ring-black ring-opacity-20"
+                    : "border-gray-300 hover:border-gray-600"
+                }`}
+                style={{ backgroundColor: color.name.toLowerCase() }}
+                title={color.name}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Size Selection */}
+      {product.sizes && product.sizes.length > 0 && (
+        <div>
+          <h3 className="font-medium mb-3">
+            Size: <span className="font-bold">{selectedSize?.name || "Select size"}</span>
+          </h3>
+          <div className="flex gap-3 flex-wrap">
+            {product.sizes.flatMap((size) =>
+              size.name
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .map((sizeName) => (
+                  <button
+                    key={sizeName}
+                    onClick={() => setSelectedSize({ ...size, name: sizeName })}
+                    className={`px-6 py-3 border rounded-lg font-medium transition-all ${
+                      selectedSize?.name === sizeName
+                        ? "bg-black text-white border-black"
+                        : "border-gray-300 hover:border-black"
+                    }`}
+                  >
+                    {sizeName.toUpperCase()}
+                  </button>
+                ))
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Price */}
-      <div className="flex items-center gap-3 mb-4">
-        <span className="text-[#D52345] text-[28px] font-bold">€158</span>
-        <span className="line-through text-gray-400 text-[20px]">€175</span>
-        <span className="bg-[#FC5732] text-white text-[12px] font-bold leading-[28px] rounded-[28px] px-[10px] flex items-center">
-          10% OFF
-        </span>
+      <div className="flex items-end gap-4">
+        <span className="text-4xl font-bold text-red-600">{totalPrice} BDT</span>
+        {oldTotal && (
+          <>
+            <span className="text-2xl text-gray-400 line-through">{oldTotal} BDT</span>
+            <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+              {discountPercent}% OFF
+            </span>
+          </>
+        )}
       </div>
 
-      {/* Countdown */}
-      <div className="bg-[#FBE9EB] border border-[#D52345] rounded-md px-[30px] pt-4 pb-3 flex items-center justify-center gap-4 flex-wrap">
-        <MdTimer className="text-lg ml-[30px] text-red-600" />
-        <span className="text-[#000] text-[16px] font-semibold">
-          Hurry up offer ends in:
-        </span>
-        <span className="font-semibold text-red-600">
-          803d : 23h : 56m : 59s
-        </span>
-      </div>
-
-      {/* Quantity + Add to cart */}
-      <p className="text-[#000000] text-[14px]">Quantity:</p>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-[127px] h-[50px] flex justify-between bg-[#F7F7F7] rounded-[3px] overflow-hidden">
+      {/* Actions */}
+      <div className="flex items-center gap-4">
+        {/* Quantity */}
+        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
           <button
-            className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
+            onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+            className="px-4 py-3 hover:bg-gray-100"
+            disabled={quantity === 1}
           >
             <FiMinus />
           </button>
-          <input
-            type="text"
-            defaultValue={1}
-            className="w-[47px] h-full text-center outline-none bg-transparent"
-          />
+          <span className="px-6 py-3 font-medium">{quantity}</span>
           <button
-            className="w-[40px] h-full transition-all duration-300 hover:bg-black hover:text-white flex items-center justify-center cursor-pointer"
+            onClick={() => setQuantity(quantity + 1)}
+            className="px-4 py-3 hover:bg-gray-100"
           >
             <FiPlus />
           </button>
         </div>
-       
-        <AddToCartButtonDeatile product={products[0]} />
 
+        {/* Add to Cart Button */}
+        <AddToCartButtonDeatile product={product}  />
 
-        <button
-          className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer"
+        {/* Buy Now */}
+        <Button
+          type="default"
+          size="large"
+          onClick={handleBuyNow}
+          className="h-12 px-8 border-2 border-black font-medium hover:bg-black hover:text-white"
         >
-          <FiHeart />
-        </button>
-        <button
-          className="w-[50px] h-[50px] flex items-center justify-center border border-[#000000] rounded-[3px] bg-white hover:bg-black hover:text-white transition-all duration-300 cursor-pointer"
-        >
-          ✕
-        </button>
+          Buy Now
+        </Button>
+
+        {/* Wishlist */}
+        <Button
+          shape="circle"
+          size="large"
+          icon={<FiHeart className="text-xl" />}
+          className="border-2 border-gray-300 hover:border-black"
+        />
       </div>
-
-      {/* Extra Links */}
-      <div className="flex flex-wrap items-center gap-x-[30px] gap-y-[10px] border-b border-[#666666] mb-[25px] pb-[25px]">
-        <button className="flex items-center gap-1 text-[14px] text-[#000000] hover:text-red-500">
-          <FiHelpCircle /> Ask A Question
-        </button>
-        <button className="flex items-center gap-1 text-[14px] text-[#000000] hover:text-red-500">
-          <FiTruck /> Shipping & Return
-        </button>
-        <button className="flex items-center gap-1 text-[14px] text-[#000000] hover:text-red-500">
-          <FiShare2 /> Share
-        </button>
-      </div>
-
-      {/* Delivery Info */}
-      <p className="text-sm leading-[16px]">
-        Delivery: <span className="text-[#D52345]">27th September – 29th September</span>
-      </p>
-      <p className="text-sm leading-[16px]">Free shipping and returns on all orders over €396</p>
-
-      {/* Payment Icons */}
-<div className="p-3 rounded bg-[#F7F7F7] h-[112px] flex flex-col items-center justify-center">
-  <p className="text-[14px] mb-3 font-medium text-[#000000] text-center">
-    Guaranteed safe checkout:
-  </p>
-  <div className="flex gap-4 text-[32px] cursor-pointer">
-  <img
-      src="https://clinicmaster.goeasyapp.com/themes/c4ca4238a0b923820dcc509a6f75849b/6/images/payments/img-1.png"
-      alt="Visa"
-      className="h-8 w-auto"
-    />
-  </div>
-</div>
-
     </div>
   );
 };

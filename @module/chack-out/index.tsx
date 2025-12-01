@@ -5,328 +5,272 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Image from "next/image";
 import { FiChevronRight } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/appstore/store";
+import { useSaveOrderMutation } from "@/appstore/order/api";
+import { clearCart } from "@/appstore/cart/cart-slice";
+import { useRouter } from "next/navigation";
 
-const Checkout = () => {
-  const validationSchema = Yup.object({
-    firstName: Yup.string().required("First name is required"),
-    lastName: Yup.string().required("Last name is required"),
-    country: Yup.string().required("Country is required"),
-    city: Yup.string().required("City is required"),
-    address: Yup.string().required("Address is required"),
-    phone: Yup.string()
-      .matches(/^[0-9]+$/, "Phone number must be digits only")
-      .required("Phone number is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    notes: Yup.string(),
-    billing: Yup.boolean(),
-    payment: Yup.string().required("Select a payment method"),
-  });
+export default function Checkout() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const cartItems = useSelector((state: RootState) => state.cart.items || []);
 
-  // ✅ Get cart items from Redux
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-  // ✅ Calculate totals
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (sum: number, item: any) => sum + item.price * item.quantity,
     0
   );
+  const total = subtotal;
 
-  const shipping = 0;
-  const discount = 0;
-  const total = subtotal - discount + shipping;
+  const [createTrigger, { isLoading }] = useSaveOrderMutation();
+
+  // Validation Schema
+  const schema = Yup.object({
+    customerName: Yup.string().required("Name is required"),
+    customerPhone: Yup.string().required("Phone is required"),
+    customerEmail: Yup.string().email("Invalid email").required("Email is required"),
+    notes: Yup.string(),
+    paymentMethod: Yup.string().required("Choose payment method"),
+  });
+
+  const handlePlaceOrder = async (values: any, { resetForm }: any) => {
+    // Prepare items exactly like your desired JSON
+    const orderItems = cartItems.map((item: any) => ({
+      productId: item.id,
+      qty: item.quantity,
+      sizeIds: item.selectedSizes || [],    // এখানে array of size ids
+      colorIds: item.selectedColors || [],  // এখানে array of color ids
+    }));
+
+    const finalData = {
+      customerName: values.customerName,
+      customerPhone: values.customerPhone,
+      customerEmail: values.customerEmail,
+      notes: values.notes || "",
+      items: orderItems,
+      payment: {
+        provider:
+          values.paymentMethod === "cod"
+            ? "cod"
+            : values.paymentMethod === "stripe"
+            ? "stripe"
+            : "paypal",
+        transactionId: values.paymentMethod === "cod" ? "" : "will_be_added_later",
+        status: "pending",
+        amountCents: Math.round(total * 100),
+        currency: "USD",
+        metadata: {
+          receiptUrl:
+            values.paymentMethod === "cod" ? "" : "https://payment/receipt",
+        },
+      },
+    };
+
+    try {
+      await createTrigger(finalData).unwrap();
+
+      // Success → Clear cart & redirect to home
+      dispatch(clearCart());
+      alert("অর্ডার সফলভাবে প্লেস হয়েছে!");
+      resetForm();
+      router.push("/"); // হোম পেজে রিডাইরেক্ট
+    } catch (error: any) {
+      console.error("Order failed:", error);
+      alert("অর্ডার প্লেস করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    }
+  };
 
   return (
     <>
-      {/* ✅ Breadcrumb */}
-      <nav className="w-full bg-[#f7f7f7] py-8 px-4" aria-label="Breadcrumb">
-        <ol className="flex flex-wrap justify-center items-center text-[14px] text-[#666666]">
-          <li className="flex items-center cursor-pointer">
-            Home
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-          <li className="flex items-center cursor-pointer">
-            Shop
-            <FiChevronRight className="mx-2 text-[#666666] text-sm" />
-          </li>
-          <li className="flex items-center text-[#000] font-medium cursor-default">
-            Checkout
-          </li>
-        </ol>
-      </nav>
+      {/* Breadcrumb */}
+      <div className="bg-gray-100 py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center text-sm text-gray-600">
+            <span>Home</span>
+            <FiChevronRight className="mx-2" />
+            <span>Shop</span>
+            <FiChevronRight className="mx-2" />
+            <span className="font-bold text-black">Checkout</span>
+          </div>
+        </div>
+      </div>
 
-      {/* ✅ Main Form Section */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
         <Formik
           initialValues={{
-            firstName: "",
-            lastName: "",
-            country: "",
-            city: "",
-            address: "",
-            phone: "",
-            email: "",
+            customerName: "",
+            customerPhone: "",
+            customerEmail: "",
             notes: "",
-            billing: true,
-            payment: "COD",
+            paymentMethod: "cod",
           }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log("Form Data:", values);
-            alert("Order placed successfully!");
-          }}
+          validationSchema={schema}
+          onSubmit={handlePlaceOrder}
         >
-          {() => (
+          {({ isSubmitting }) => (
             <Form className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              {/* LEFT SIDE - Shipping Details */}
+              {/* Left - Customer Info */}
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-semibold mb-2 text-[#000000]">
-                  Shipping details
-                </h2>
-                <p className="text-sm text-gray-500 mb-8">
-                  If you have an account you can{" "}
-                  <span className="text-blue-600 cursor-pointer">Login</span> or{" "}
-                  <span className="text-blue-600 cursor-pointer">Register</span>.
-                </p>
+                <h2 className="text-3xl font-bold mb-8">Billing Details</h2>
 
-                {/* All form fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-6">
                   <div>
-                    <label className="block mb-1 text-sm font-medium text-[#000000]">
-                      First name*
-                    </label>
+                    <label className="block text-sm font-medium mb-1">Full Name *</label>
                     <Field
-                      name="firstName"
-                      className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
+                      name="customerName"
+                      placeholder="Enter Your name"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black"
                     />
                     <ErrorMessage
-                      name="firstName"
-                      component="div"
+                      name="customerName"
+                      component="p"
                       className="text-red-500 text-sm mt-1"
                     />
                   </div>
+
                   <div>
-                    <label className="block mb-1 text-sm font-medium text-[#000000]">
-                      Last name*
-                    </label>
+                    <label className="block text-sm font-medium mb-1">Phone *</label>
                     <Field
-                      name="lastName"
-                      className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
+                      name="customerPhone"
+                      placeholder="+12065550100"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black"
                     />
                     <ErrorMessage
-                      name="lastName"
-                      component="div"
+                      name="customerPhone"
+                      component="p"
                       className="text-red-500 text-sm mt-1"
                     />
                   </div>
-                </div>
 
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Country region*
-                  </label>
-                  <Field
-                    as="select"
-                    name="country"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
-                  >
-                    <option value="">Select country</option>
-                    <option value="Bangladesh">Bangladesh</option>
-                    <option value="India">India</option>
-                    <option value="USA">USA</option>
-                  </Field>
-                  <ErrorMessage
-                    name="country"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email *</label>
+                    <Field
+                      name="customerEmail"
+                      type="email"
+                      placeholder="jane@example.com"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black"
+                    />
+                    <ErrorMessage
+                      name="customerEmail"
+                      component="p"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
 
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Town / City*
-                  </label>
-                  <Field
-                    name="city"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage
-                    name="city"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Order Notes (optional)
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="notes"
+                      rows={4}
+                      placeholder="Notes about your order, e.g. special notes for delivery."
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 resize-none focus:outline-none focus:border-black"
+                    />
+                  </div>
                 </div>
-
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Address*
-                  </label>
-                  <Field
-                    name="address"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage
-                    name="address"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Phone number*
-                  </label>
-                  <Field
-                    name="phone"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage
-                    name="phone"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Email*
-                  </label>
-                  <Field
-                    name="email"
-                    type="email"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 h-[50px] focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block mb-1 text-sm font-medium text-[#000000]">
-                    Order notes (optional)
-                  </label>
-                  <Field
-                    as="textarea"
-                    name="notes"
-                    className="w-full border border-[#eeeeee] text-[#000000] rounded px-4 py-3 h-28 focus:outline-none focus:border-black"
-                  />
-                </div>
-
-                <label className="flex items-center gap-2 text-sm text-[#000000] mb-6">
-                  <Field
-                    type="checkbox"
-                    name="billing"
-                    className="accent-[#000000]"
-                  />
-                  Use same address for billing
-                </label>
               </div>
 
-              {/* ✅ RIGHT SIDE - Cart Summary + Payment */}
-              <div className="lg:col-span-1 space-y-6">
+              {/* Right - Order Summary */}
+              <div className="space-y-6">
                 {/* Cart Items */}
-                <h3 className="font-semibold mb-4 text-[20px] text-[#000000]">
-                  Your products
-                </h3>
-                <div className="p-5 bg-[#fbfbfc]">
-                  {cartItems.length > 0 ? (
-                    cartItems.map((item:any) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between mb-4"
-                      >
-                        <div className="flex items-center gap-3">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-lg mb-4">Your Order</h3>
+                  {cartItems.length === 0 ? (
+                    <p className="text-gray-500">Your cart is empty</p>
+                  ) : (
+                    cartItems.map((item: any) => (
+                      <div key={item.id} className="flex gap-4 mb-5 last:mb-0">
+                        <div className="flex gap-4">
                           <Image
                             src={item.images?.[0] || "/placeholder.jpg"}
                             alt={item.name}
-                            width={62}
-                            height={62}
-                            className="rounded"
+                            width={70}
+                            height={70}
+                            className="rounded object-cover"
                           />
-                          <span className="text-[#000000] text-sm">
-                            {item.name} × {item.quantity}
-                          </span>
+                          <div className="flex-1">
+                            <p className="font-medium">{item.name}</p>
+                            {item.selectedSizes && item.selectedSizes.length > 0 && (
+                              <p className="text-sm text-gray-600">
+                                Size: {item.selectedSizes.join(", ")}
+                              </p>
+                            )}
+                            {item.selectedColors && item.selectedColors.length > 0 && (
+                              <p className="text-sm text-gray-600">
+                                Color: {item.selectedColors.join(", ")}
+                              </p>
+                            )}
+                            <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                          </div>
+                          <p className="font-bold">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
                         </div>
-                        <span className="font-medium text-[#000000]">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
                       </div>
                     ))
-                  ) : (
-                    <p className="text-[#999] text-sm">Your cart is empty.</p>
                   )}
                 </div>
 
-                {/* Order Summary */}
-                <h3 className="font-semibold mb-4 text-[20px] text-[#000000]">
-                  Your order
-                </h3>
-                <div className="p-5 bg-[#fbfbfc]">
-                  <div className="flex justify-between text-sm mb-2">
+                {/* Total */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="flex justify-between mb-2">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Discount</span>
-                    <span>${discount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between font-semibold text-[#e63946] mt-4">
+                  <div className="flex justify-between font-bold text-xl pt-4 border-t">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span className="text-red-600">${total.toFixed(2)}</span>
                   </div>
                 </div>
 
-                {/* Payment */}
-                <h3 className="font-semibold mb-4 text-[20px] text-[#000000]">
-                  Payment method
-                </h3>
-                <div className="p-5 bg-[#fbfbfc]">
-                  <div className="flex flex-col gap-3 mb-6 text-sm">
-                    <label className="flex items-center gap-2">
+                {/* Payment Method */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-lg mb-4">Payment Method</h3>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
                       <Field
                         type="radio"
-                        name="payment"
-                        value="COD"
-                        className="accent-[#e63946]"
+                        name="paymentMethod"
+                        value="cod"
+                        className="w-4 h-4 text-black"
                       />
-                      <span>Cash on Delivery (COD)</span>
+                      <span>Cash on Delivery</span>
                     </label>
-                    <label className="flex items-center gap-2">
+                    <label className="flex items-center gap-3 cursor-pointer">
                       <Field
                         type="radio"
-                        name="payment"
-                        value="PayPal"
-                        className="accent-[#e63946]"
+                        name="paymentMethod"
+                        value="stripe"
+                        className="w-4 h-4 text-black"
+                      />
+                      <span>Stripe (Card)</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <Field
+                        type="radio"
+                        name="paymentMethod"
+                        value="paypal"
+                        className="w-4 h-4 text-black"
                       />
                       <span>PayPal</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                      <Field
-                        type="radio"
-                        name="payment"
-                        value="Stripe"
-                        className="accent-[#e63946]"
-                      />
-                      <span>Stripe</span>
-                    </label>
-                    <ErrorMessage
-                      name="payment"
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
                   </div>
+                  <ErrorMessage
+                    name="paymentMethod"
+                    component="p"
+                    className="text-red-500 text-sm mt-2"
+                  />
+
                   <button
                     type="submit"
-                    className="w-full cursor-pointer bg-black text-white py-3 rounded-md hover:bg-[#e63946] transition text-sm font-medium"
+                    disabled={isLoading || isSubmitting || cartItems.length === 0}
+                    className="w-full bg-black text-white py-4 rounded-lg mt-6 font-bold hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Place order
+                    {isLoading || isSubmitting
+                      ? "Placing Order..."
+                      : `Place Order – $${total.toFixed(2)}`}
                   </button>
                 </div>
               </div>
@@ -336,6 +280,4 @@ const Checkout = () => {
       </div>
     </>
   );
-};
-
-export default Checkout;
+}

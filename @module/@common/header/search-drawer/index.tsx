@@ -16,7 +16,7 @@ const SearchDrawer: React.FC<SearchDrawerProps> = ({ open, onClose }) => {
       open={open}
       onClose={onClose}
       closeIcon={<span className="text-2xl text-[#333]">&times;</span>}
-      bodyStyle={{ padding: 0 }}
+  
       className="search-drawer"
     >
       <div className="flex flex-col items-center bg-white min-h-screen">
