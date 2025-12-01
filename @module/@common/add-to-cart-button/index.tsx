@@ -1,19 +1,15 @@
 
 "use client";
+
 import React from "react";
 import { FiShoppingCart } from "react-icons/fi";
-import { useModal } from "../modal/modal-modal-context";
+import { useModal, Product } from "../modal/modal-modal-context";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/appstore/cart/cart-slice";
 
 interface AddToCartButtonProps {
-  product: {
-    id: number;
-    name: string;
-    price: number | string;
+  product: Product & {
     oldPrice?: number | string | null;
-    category: string;
-    images: string[];
   };
   className?: string;
 }
@@ -22,20 +18,23 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, className })
   const { openCartModal } = useModal();
   const dispatch = useDispatch();
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
 
+    const priceValue = product.price as string | number;
     const priceNum =
-      typeof product.price === "string"
-        ? parseFloat(product.price.replace("€", "").trim())
-        : product.price;
+      typeof priceValue === "string"
+        ? parseFloat(priceValue.replace(/[^0-9.-]+/g, "")) || 0
+        : priceValue;
 
-    const oldPriceNum = product.oldPrice
-      ? typeof product.oldPrice === "string"
-        ? parseFloat(product.oldPrice.replace("€", "").trim())
-        : product.oldPrice
-      : undefined;
+    const oldPriceValue = product.oldPrice as string | number | undefined;
+    const oldPriceNum =
+      oldPriceValue !== null && oldPriceValue !== undefined
+        ? typeof oldPriceValue === "string"
+          ? parseFloat(oldPriceValue.replace(/[^0-9.-]+/g, "")) || undefined
+          : oldPriceValue
+        : undefined;
 
     const cartItem = {
       id: product.id,
@@ -43,15 +42,13 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, className })
       price: priceNum,
       oldPrice: oldPriceNum,
       category: product.category,
-      images: product.images,
+      images: product.images.length > 0 ? product.images : ["/placeholder.jpg"],
       quantity: 1,
     };
 
-    // Redux update
     dispatch(addToCart(cartItem));
 
-    // FIX: no argument allowed
-    openCartModal();
+    openCartModal(product);
   };
 
   return (

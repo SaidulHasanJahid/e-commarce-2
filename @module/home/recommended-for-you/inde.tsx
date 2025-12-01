@@ -33,6 +33,14 @@ const getSafeImageUrl = (path?: string | null) => {
 };
 // ----------------------------
 
+// Full Image URL Helper
+const getImageUrl = (path?: string | null): string => {
+  if (!path || path === "null" || path === "undefined") return "/placeholder.jpg";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (path.startsWith("/")) return `${process.env.NEXT_PUBLIC_BASE_URL || ""}${path}`;
+  return `${process.env.NEXT_PUBLIC_BASE_URL || ""}/${path}`;
+};
+
 const RecommendedForYou = () => {
   const { openProductModal } = useModal();
   const navPrevClass = "recommended-swiper-prev";

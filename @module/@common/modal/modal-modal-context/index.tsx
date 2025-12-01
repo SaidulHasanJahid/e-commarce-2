@@ -1,11 +1,96 @@
-// src/components/context/modal-modal-context.tsx
+// // src/components/context/modal-modal-context.tsx
+// "use client";
+
+// import React, { createContext, useContext, useState } from "react";
+// import ProductModal from "../product-modal";
+// import AddToCartModal from "../addTo-cart-modal";
+
+// // Product type
+// export interface Product {
+//   id: number;
+//   name: string;
+//   category: string;
+//   price: number;
+//   oldPrice?: number;
+//   discount?: string;
+//   images: string[];
+//   quantity?: number;
+// }
+
+// // Context type - কার্ট রিমুভ করা হয়েছে (Redux থেকে নিবে)
+// interface ModalContextType {
+//   openProductModal: (product: Product) => void;
+//   openCartModal: () => void;        // এখন আর প্রোডাক্ট পাস করতে হবে না
+//   closeProductModal: () => void;
+//   closeCartModal: () => void;
+// }
+
+// const ModalContext = createContext<ModalContextType | undefined>(undefined);
+
+// export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+//   const [isProductOpen, setIsProductOpen] = useState(false);
+//   const [isCartOpen, setIsCartOpen] = useState(false);
+//   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+//   const [quantity, setQuantity] = useState(1);
+
+//   const openProductModal = (product: Product) => {
+//     setSelectedProduct(product);
+//     setQuantity(1);
+//     setIsProductOpen(true);
+//   };
+
+//   const openCartModal = () => {
+//     setIsCartOpen(true);
+//   };
+
+//   const closeProductModal = () => {
+//     setIsProductOpen(false);
+//     setSelectedProduct(null);
+//   };
+
+//   const closeCartModal = () => {
+//     setIsCartOpen(false);
+//   };
+
+//   return (
+//     <ModalContext.Provider
+//       value={{
+//         openProductModal,
+//         openCartModal,
+//         closeProductModal,
+//         closeCartModal,
+//       }}
+//     >
+//       {children}
+
+//       {/* Product Quick View Modal */}
+//       <ProductModal
+//         isOpen={isProductOpen}
+//         onClose={closeProductModal}
+//         product={selectedProduct}
+//         quantity={quantity}
+//         setQuantity={setQuantity}
+//       />
+
+//       {/* Add to Cart Success Modal - Redux থেকে ডাটা নিবে */}
+//       <AddToCartModal
+//         isOpen={isCartOpen}
+//         onClose={closeCartModal}
+//       />
+//     </ModalContext.Provider>
+//   );
+// };
+
+// export const useModal = () => {
+//   const context = useContext(ModalContext);
+//   if (!context) throw new Error("useModal must be used inside ModalProvider");
+//   return context;
+// };
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import ProductModal from "../product-modal";
-import AddToCartModal from "../addTo-cart-modal";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Product type
+// Type for product
 export interface Product {
   id: number;
   name: string;
@@ -14,75 +99,68 @@ export interface Product {
   oldPrice?: number;
   discount?: string;
   images: string[];
-  quantity?: number;
 }
 
-// Context type - কার্ট রিমুভ করা হয়েছে (Redux থেকে নিবে)
+// Context type
 interface ModalContextType {
-  openProductModal: (product: Product) => void;
-  openCartModal: () => void;        // এখন আর প্রোডাক্ট পাস করতে হবে না
-  closeProductModal: () => void;
+  cartProduct: Product | null;
+  productModal: Product | null;
+  isCartOpen: boolean;
+  isProductOpen: boolean;
+  openCartModal: (product: Product) => void;
   closeCartModal: () => void;
+  openProductModal: (product: Product) => void;
+  closeProductModal: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isProductOpen, setIsProductOpen] = useState(false);
+export const ModalProvider = ({ children }: { children: ReactNode }) => {
+  const [cartProduct, setCartProduct] = useState<Product | null>(null);
+  const [productModal, setProductModal] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [isProductOpen, setIsProductOpen] = useState(false);
 
-  const openProductModal = (product: Product) => {
-    setSelectedProduct(product);
-    setQuantity(1);
-    setIsProductOpen(true);
-  };
-
-  const openCartModal = () => {
+  const openCartModal = (product: Product) => {
+    setCartProduct(product);
     setIsCartOpen(true);
   };
 
-  const closeProductModal = () => {
-    setIsProductOpen(false);
-    setSelectedProduct(null);
+  const closeCartModal = () => {
+    setCartProduct(null);
+    setIsCartOpen(false);
   };
 
-  const closeCartModal = () => {
-    setIsCartOpen(false);
+  const openProductModal = (product: Product) => {
+    setProductModal(product);
+    setIsProductOpen(true);
+  };
+
+  const closeProductModal = () => {
+    setProductModal(null);
+    setIsProductOpen(false);
   };
 
   return (
     <ModalContext.Provider
       value={{
-        openProductModal,
+        cartProduct,
+        productModal,
+        isCartOpen,
+        isProductOpen,
         openCartModal,
-        closeProductModal,
         closeCartModal,
+        openProductModal,
+        closeProductModal,
       }}
     >
       {children}
-
-      {/* Product Quick View Modal */}
-      <ProductModal
-        isOpen={isProductOpen}
-        onClose={closeProductModal}
-        product={selectedProduct}
-        quantity={quantity}
-        setQuantity={setQuantity}
-      />
-
-      {/* Add to Cart Success Modal - Redux থেকে ডাটা নিবে */}
-      <AddToCartModal
-        isOpen={isCartOpen}
-        onClose={closeCartModal}
-      />
     </ModalContext.Provider>
   );
 };
 
 export const useModal = () => {
   const context = useContext(ModalContext);
-  if (!context) throw new Error("useModal must be used inside ModalProvider");
+  if (!context) throw new Error("useModal must be used within ModalProvider");
   return context;
 };
