@@ -5,15 +5,19 @@ import { Modal, Divider } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
-import RecommendedForYouModal from "../related-porduct-addtocart";
+
+// এই হেল্পার ফাংশন যোগ করলাম — সব ইমেজের জন্য কাজ করবে
+const getImageUrl = (path?: string | null): string => {
+  if (!path) return "/placeholder.png";
+  if (path.startsWith("http")) return path;
+  return `${process.env.NEXT_PUBLIC_BASE_URL || ""}${path}`;
+};
 
 const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const router = useRouter();
 
-  // Live cart items from Redux (এখান থেকে লাইভ আপডেট হবে)
   const cartItems = useSelector((state: any) => state.cart.items || []);
 
-  // Subtotal calculation
   const subtotal = cartItems.reduce(
     (sum: number, item: any) => sum + item.price * item.quantity,
     0
@@ -32,7 +36,7 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       width={900}
       closeIcon={false}
       className="rounded-lg add-to-cart-modal"
-      bodyStyle={{ padding: 0, maxHeight: "80vh", overflowY: "auto" }} // Scroll enable
+      bodyStyle={{ padding: 0, maxHeight: "80vh", overflowY: "auto" }}
     >
       <div className="flex justify-center items-center gap-2 text-[24px] font-medium text-[#000000] py-4">
         <CheckCircleOutlined className="text-green-600 text-2xl" />
@@ -49,7 +53,7 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         {/* Left: Cart Items */}
         <div className="w-full lg:w-1/2 p-4 border-b lg:border-b-0 lg:border-r border-gray-200">
           <div
-            className="max-h-[300px] overflow-y-auto pr-2" // Scroll when more than 3 items
+            className="max-h-[300px] overflow-y-auto pr-2"
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "#ccc transparent",
@@ -63,9 +67,9 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                   key={item.id}
                   className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-5 pb-4 border-b border-gray-100 last:border-0"
                 >
-                  <div className="w-[100px] h-[100px] bg-gray-100 rounded overflow-hidden  flex-shrink-0">
+                  <div className="w-[100px] h-[100px] bg-gray-100 rounded overflow-hidden flex-shrink-0">
                     <img
-                      src={item.images?.[0] || "/placeholder.png"}
+                      src={getImageUrl(item.images?.[0])}
                       alt={item.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
@@ -78,7 +82,7 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                       {item.name}
                     </h3>
                     <p className="text-[#f2072f] font-semibold text-[15px] mt-1">
-                      €{item.price}
+                      ${item.price}
                     </p>
                     <p className="text-[#666] text-[13px]">Qty: {item.quantity || 1}</p>
                   </div>
@@ -94,7 +98,7 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             <div className="flex justify-between items-center mb-6">
               <span className="text-[#000000] text-[18px] font-medium">Subtotal</span>
               <span className="text-[#f2072f] font-bold text-[20px]">
-                €{subtotal.toFixed(2)}
+                ${subtotal.toFixed(2)}
               </span>
             </div>
 
@@ -119,7 +123,6 @@ const AddToCartModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       <Divider className="my-5" />
       <h3 className="font-medium mb-4 text-center text-lg">You may also like</h3>
       <div className="px-4 pb-6">
-        <RecommendedForYouModal />
       </div>
     </Modal>
   );

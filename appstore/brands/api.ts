@@ -3,11 +3,11 @@ import { apiSlice } from "@/appstore/api-slice";
 export const productApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (build) => ({
-    isfeatureoffer: build.query<any, void>({
+    brands : build.query<any, void>({
       query: () =>
-        "/catalog/categories?page=1&limit=20&isFeature=true",
+        "/catalog/brands?page=1&limit=20",
     }),
   }),
 });
 
-export const { useIsfeatureofferQuery } = productApi;
+export const { useBrandsQuery } = productApi;

@@ -4,19 +4,22 @@ import React, { useState } from "react";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
-import "./index.css"; 
+import "./index.css";
 
-const lorem1 =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique, eros sed semper egestas, nunc risus viverra purus, in aliquet orci magna at ligula. Donec dictum augue ut lectus congue, a gravida nulla condimentum. Pellentesque id felis ac urna pretium ultrices. Integer non ante ligula. Vivamus vel ipsum id eros euismod dictum. Cras congue malesuada ante, ac malesuada nulla commodo eget. Curabitur quis orci sit amet nulla feugiat sollicitudin. Mauris malesuada venenatis dui vel eleifend. Suspendisse eget felis nec risus tincidunt hendrerit. Nulla sed tempor magna, sed pretium erat. Aenean luctus lacus nec mauris pharetra, eu vehicula lacus porttitor. Proin sed sem at nulla mattis suscipit non a erat. Sed eget justo in urna porta ultrices. Suspendisse potenti. Ut eget ipsum risus. Nam vel lacus at erat tincidunt varius at a eros. Aliquam in velit vitae nunc pretium dictum nec non libero.";
+interface ProductTabsProps {
+  product: any;
+}
 
-const lorem2 =
-  "Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula, facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi, sed ullamcorper ipsum dignissim ac. In at libero sed nunc venenatis imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida venenatis. Integer fringilla congue eros non fermentum. Sed dapibus pulvinar nibh tempor porta. Cras ac leo purus. Mauris quis diam velit.";
-
-const lorem3 =
-  "Curabitur euismod sem vel vulputate convallis. Vestibulum ut ligula eu libero laoreet commodo. In sit amet pulvinar magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed euismod, arcu sit amet posuere malesuada, lorem ligula laoreet purus, a fringilla massa nulla at ligula. Vivamus feugiat, magna a scelerisque malesuada, eros lectus facilisis nisl, eget condimentum sem sapien id odio. Pellentesque vitae nulla at enim pharetra ultricies. Ut dignissim turpis vitae tristique tincidunt. Proin luctus nunc sit amet justo pharetra, nec aliquet nisl tristique. Integer consequat, purus id dapibus congue, sapien metus posuere orci, at volutpat nunc libero sed mi. Aenean egestas, sapien ut luctus pulvinar, nulla elit dictum libero, ac hendrerit nunc mauris nec nisl.";
-
-const AnimatedTabs = () => {
+const AnimatedTabs: React.FC<ProductTabsProps> = ({ product }) => {
   const [activeKey, setActiveKey] = useState("1");
+
+  // Dynamic data with fallback
+  const description = product?.descriptionHtml || "<p>No description available.</p>";
+  const shipping = product?.shippingNote || "No shipping information available.";
+  const returns = product?.returnPolicyNote || "No return policy information.";
+  const reviews = Array.isArray(product?.reviews) ? product.reviews : [];
+  const rating = product?.ratingAvg ?? 0;
+  const reviewCount = product?.reviewCount ?? 0;
 
   const items: TabsProps["items"] = [
     {
@@ -29,9 +32,12 @@ const AnimatedTabs = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className="py-6 px-15 bg-white"
+          className="py-6 px-4 bg-white"
         >
-          <p className="text-[#666666] text-[16px] leading-7">{lorem1}</p>
+          <div
+            className="text-[#666666] text-[16px] leading-7"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         </motion.div>
       ),
     },
@@ -45,15 +51,20 @@ const AnimatedTabs = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4 }}
-          className="py-6 px-15 bg-white"
+          className="py-6 px-4 bg-white space-y-4"
         >
-          <p className="text-[#666666] text-[16px] leading-7">{lorem2}</p>
+          <p className="text-[#666666] text-[16px] leading-7">
+            <strong>Shipping:</strong> {shipping}
+          </p>
+          <p className="text-[#666666] text-[16px] leading-7">
+            <strong>Returns:</strong> {returns}
+          </p>
         </motion.div>
       ),
     },
     {
       key: "3",
-      label: "Review",
+      label: `Review (${reviewCount})`,
       children: (
         <motion.div
           key="tab3"
@@ -61,16 +72,34 @@ const AnimatedTabs = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.4 }}
-          className="py-6 px-15 bg-white"
+          className="py-6 px-4 bg-white"
         >
-          <p className="text-[#666666] text-[16px] leading-7">{lorem3}</p>
+          {/* <h3 className="text-lg font-semibold mb-2">Rating: ⭐ {rating}/5</h3> */}
+
+          {reviews.length === 0 ? (
+            <p className="text-[#666]">No reviews yet.</p>
+          ) : (
+            <ul className="space-y-4">
+              {reviews.map((rev: any) => (
+                <li key={rev.id} className="border-b pb-3">
+                  <p className="text-sm font-medium">⭐ {rev.rating}</p>
+                  <p className="text-[#666]">{rev.comment}</p>
+                  <p className="text-xs text-gray-500">
+                    {rev.createdAt
+                      ? new Date(rev.createdAt).toLocaleDateString()
+                      : "Date not available"}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
         </motion.div>
       ),
     },
   ];
 
   return (
-    <div className="w-full  bg-[#F7F7F7] mb-30 mt-10 flex items-center justify-center py-10">
+    <div className="w-full bg-[#F7F7F7] mb-30 mt-10 flex items-center justify-center py-10">
       <div className="w-full container">
         <Tabs
           activeKey={activeKey}
@@ -84,7 +113,7 @@ const AnimatedTabs = () => {
               </AnimatePresence>
             ),
           }))}
-          className="custom-tabs" 
+          className="custom-tabs"
         />
       </div>
     </div>
